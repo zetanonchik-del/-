@@ -13,9 +13,9 @@ public class BotConfig {
     @Value("${bot.name:TensuraSlimeRpgBot}")
     private String botName;
 
-    @Value("${bot.token:8948513585:AAGqiADr7q2pfkSyx8415r51eguB2KVkgCY}")
+    @Value("${bot.token:}")
     private String botToken;
 
-    @Value("${bot.admin.id:6112843760}")
+    @Value("${bot.admin.id:0}")
     private Long adminId;
 }
