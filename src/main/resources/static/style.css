@@ -911,30 +911,28 @@ video {
 /* PPTX presentation container */
 .pptx-viewer-container {
   width: 100%;
-  max-width: 920px;
+  max-width: 980px;
   margin: 0 auto;
-  padding: 16px 12px 30px;
+  padding: 16px 12px 36px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   box-sizing: border-box;
 }
 
 .pptx-slide-card {
   width: 100%;
-  background: linear-gradient(155deg, #181a24 0%, #101118 100%);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
-  padding: 24px 24px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: #12141d;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px 14px 18px;
+  box-shadow: 0 6px 26px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  min-height: 260px;
+  gap: 12px;
   transition: transform 0.2s ease, opacity 0.2s ease;
-  user-select: text;
 }
 
 .pptx-slide-header-bar {
@@ -968,116 +966,104 @@ video {
   font-weight: 500;
 }
 
-.pptx-slide-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.pptx-slide-heading {
-  font-size: 20px;
-  font-weight: 700;
-  color: #ffffff;
-  margin: 4px 0 10px;
-  line-height: 1.35;
-  border-left: 4px solid var(--accent-blue);
-  padding-left: 10px;
-}
-
-.pptx-paragraph {
-  font-size: 15px;
-  color: #e6edf3;
-  line-height: 1.6;
-  margin: 4px 0;
-}
-
-.pptx-bullet-list {
-  list-style-type: none;
-  padding-left: 0;
-  margin: 6px 0;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.pptx-bullet-item {
+/* 16:9 Presentation Canvas (True PowerPoint Experience) */
+.pptx-slide-canvas {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #ffffff;
+  border-radius: 8px;
   position: relative;
-  padding-left: 20px;
-  font-size: 15px;
-  color: #d1d7e0;
-  line-height: 1.55;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  container-type: inline-size;
+  user-select: text;
 }
 
-.pptx-bullet-item::before {
-  content: "•";
+.pptx-connectors-layer {
   position: absolute;
-  left: 4px;
-  top: 0;
-  color: var(--accent-blue);
-  font-size: 18px;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
 }
 
-.pptx-bullet-item.lvl-1 {
-  padding-left: 36px;
-  color: #aeb5c2;
-}
-
-.pptx-bullet-item.lvl-1::before {
-  content: "◦";
-  left: 20px;
-}
-
-.pptx-bullet-item.lvl-2 {
-  padding-left: 52px;
-  color: #8c93a3;
-}
-
-.pptx-bullet-item.lvl-2::before {
-  content: "▪";
-  left: 36px;
-  font-size: 12px;
-}
-
-.pptx-image-wrapper {
+.pptx-canvas-elem {
+  position: absolute;
+  box-sizing: border-box;
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin: 12px 0;
 }
 
-.pptx-slide-image {
-  max-width: 100%;
-  max-height: 380px;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+.pptx-picture {
+  z-index: 2;
+  pointer-events: none;
 }
 
-.pptx-table-wrapper {
-  overflow-x: auto;
-  margin: 12px 0;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.pptx-shape {
+  z-index: 3;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.pptx-shape.diamond {
+  background: transparent !important;
+  border: none !important;
+}
+
+.pptx-diamond-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.pptx-text-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  line-height: 1.25;
+}
+
+.pptx-text-p {
+  font-size: clamp(8px, 1.6cqw, 16px);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  word-break: break-word;
+  margin: 1px 0;
+}
+
+.pptx-table-box {
+  z-index: 3;
+  overflow: auto;
 }
 
 .pptx-slide-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13px;
+  font-size: clamp(7px, 1.3cqw, 13px);
+  background: #ffffff;
+  color: #111827;
 }
 
 .pptx-slide-table th {
-  background: rgba(255, 255, 255, 0.07);
-  color: #ffffff;
-  padding: 10px 12px;
-  text-align: left;
+  background: #f3f4f6;
+  color: #111827;
+  padding: 4px 6px;
+  border: 1px solid #d1d5db;
   font-weight: 600;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .pptx-slide-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  color: #c9d1d9;
+  padding: 4px 6px;
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
 }
 
 /* Spreadsheet table viewer */
