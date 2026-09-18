@@ -42,6 +42,7 @@ const I18N = {
     nothingFound: "Ничего не найдено",
     fileNotReadyYet: "Файл ещё загружается на сервер, попробуйте чуть позже.",
     rotateVideo: "Повернуть видео",
+    close: "Закрыть",
     docLoading: "Загрузка документа...",
     docLoadError: "Не удалось открыть документ.",
   },
@@ -77,6 +78,7 @@ const I18N = {
     nothingFound: "Hech narsa topilmadi",
     fileNotReadyYet: "Fayl hali serverga yuklanmoqda, birozdan keyin urinib ko'ring.",
     rotateVideo: "Videoni burish",
+    close: "Yopish",
     docLoading: "Hujjat yuklanmoqda...",
     docLoadError: "Hujjatni ochib bo'lmadi.",
   },
@@ -112,12 +114,34 @@ const I18N = {
     nothingFound: "Nothing found",
     fileNotReadyYet: "The file is still being uploaded to the server, please try again shortly.",
     rotateVideo: "Rotate video",
+    close: "Close",
     docLoading: "Loading document...",
     docLoadError: "Failed to open document.",
   },
 };
 
-let currentLang = "ru";
+function getInitialLang() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramLang = urlParams.get("lang");
+    if (paramLang && I18N[paramLang.toLowerCase()]) {
+      return paramLang.toLowerCase();
+    }
+    const tgLang = tg?.initDataUnsafe?.user?.language_code;
+    if (tgLang) {
+      const code = tgLang.toLowerCase();
+      if (code.startsWith("uz")) return "uz";
+      if (code.startsWith("en")) return "en";
+      if (code.startsWith("ru")) return "ru";
+    }
+    const navLang = (navigator.language || navigator.userLanguage || "").toLowerCase();
+    if (navLang.startsWith("uz")) return "uz";
+    if (navLang.startsWith("en")) return "en";
+  } catch (e) {}
+  return "ru";
+}
+
+let currentLang = getInitialLang();
 function t(key, ...args) {
   const dict = I18N[currentLang] || I18N.ru;
   const val = dict[key] ?? I18N.ru[key];
@@ -209,10 +233,22 @@ function applyStaticTranslations() {
   sendActionBtn.textContent = t("sendToChatBtn");
   openDirectBtn.textContent = t("openFileBtn");
   const rotateBtn = document.getElementById("rotateVideoBtn");
-  if (rotateBtn) rotateBtn.title = t("rotateVideo");
+  if (rotateBtn) {
+    const text = t("rotateVideo");
+    rotateBtn.title = text;
+    rotateBtn.setAttribute("aria-label", text);
+    rotateBtn.setAttribute("data-tooltip", text);
+  }
+  const exitBtn = document.getElementById("exitLandscapeBtn");
+  if (exitBtn) {
+    exitBtn.title = t("close") || "✕";
+  }
   const loadingText = document.getElementById("viewerLoadingText");
   if (loadingText) loadingText.textContent = t("docLoading");
 }
+
+// Initial call to translate UI immediately
+applyStaticTranslations();
 
 async function fetchUserLang() {
   const uid = getTelegramUserId();
@@ -820,7 +856,7 @@ openDirectBtn.onclick = async () => {
   openUniversalViewer(fileObj);
 };
 
-// Point 7: Поворот видео в Mini App для смартфонов (fullscreen + landscape + CSS fallback)
+// Point 7: Поворот видео и полноэкранный режим
 const videoContainer = document.getElementById("videoContainer");
 const rotateVideoBtn = document.getElementById("rotateVideoBtn");
 const exitLandscapeBtn = document.getElementById("exitLandscapeBtn");
@@ -830,14 +866,18 @@ function toggleVideoRotation() {
   isRotatedLandscape = !isRotatedLandscape;
   if (isRotatedLandscape) {
     let handled = false;
-    if (videoPlayer.requestFullscreen) {
-      videoPlayer.requestFullscreen().then(() => {
+    const fsTarget = videoContainer || videoPlayer;
+    if (fsTarget.requestFullscreen) {
+      fsTarget.requestFullscreen().then(() => {
         if (screen.orientation && screen.orientation.lock) {
           screen.orientation.lock('landscape').catch(() => {});
         }
       }).catch(() => {
         applyCssLandscape();
       });
+      handled = true;
+    } else if (fsTarget.webkitRequestFullscreen) {
+      fsTarget.webkitRequestFullscreen();
       handled = true;
     } else if (videoPlayer.webkitEnterFullscreen) {
       videoPlayer.webkitEnterFullscreen();
@@ -849,7 +889,7 @@ function toggleVideoRotation() {
     }
   } else {
     exitCssLandscape();
-    if (document.exitFullscreen && document.fullscreenElement) {
+    if (document.exitFullscreen && (document.fullscreenElement || document.webkitFullscreenElement)) {
       document.exitFullscreen().catch(() => {});
     }
     if (screen.orientation && screen.orientation.unlock) {
@@ -858,11 +898,77 @@ function toggleVideoRotation() {
   }
 }
 
+// Redirect native requestFullscreen calls on video element to videoContainer
+if (typeof HTMLVideoElement !== "undefined") {
+  const origProtoFs = HTMLVideoElement.prototype.requestFullscreen;
+  if (origProtoFs) {
+    HTMLVideoElement.prototype.requestFullscreen = function(options) {
+      if (this === videoPlayer && videoContainer && videoContainer.requestFullscreen) {
+        return videoContainer.requestFullscreen(options);
+      }
+      return origProtoFs.call(this, options);
+    };
+  }
+
+  const origProtoWebkitFs = HTMLVideoElement.prototype.webkitRequestFullscreen;
+  if (origProtoWebkitFs) {
+    HTMLVideoElement.prototype.webkitRequestFullscreen = function(options) {
+      if (this === videoPlayer && videoContainer && videoContainer.webkitRequestFullscreen) {
+        return videoContainer.webkitRequestFullscreen(options);
+      }
+      return origProtoWebkitFs.call(this, options);
+    };
+  }
+}
+
+if (videoPlayer) {
+  videoPlayer.requestFullscreen = function(options) {
+    if (videoContainer && videoContainer.requestFullscreen) {
+      return videoContainer.requestFullscreen(options);
+    }
+    return Promise.reject(new Error("Fullscreen not supported"));
+  };
+  if (videoPlayer.webkitRequestFullscreen) {
+    videoPlayer.webkitRequestFullscreen = function(options) {
+      if (videoContainer && videoContainer.webkitRequestFullscreen) {
+        return videoContainer.webkitRequestFullscreen(options);
+      }
+    };
+  }
+}
+
+// Keep fullscreen synchronized: if native controls put videoPlayer in fullscreen, switch to videoContainer
+function onFullscreenChangeHandler() {
+  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+  if (fsEl === videoPlayer) {
+    if (videoContainer && videoContainer.requestFullscreen) {
+      videoContainer.requestFullscreen().catch(() => {});
+    } else if (videoContainer && videoContainer.webkitRequestFullscreen) {
+      videoContainer.webkitRequestFullscreen();
+    }
+  } else if (!fsEl) {
+    if (isRotatedLandscape) {
+      exitCssLandscape();
+    }
+  }
+}
+document.addEventListener("fullscreenchange", onFullscreenChangeHandler);
+document.addEventListener("webkitfullscreenchange", onFullscreenChangeHandler);
+
+function updateRotateBtnTooltip() {
+  if (!rotateVideoBtn) return;
+  const text = t("rotateVideo");
+  rotateVideoBtn.title = text;
+  rotateVideoBtn.setAttribute("aria-label", text);
+  rotateVideoBtn.setAttribute("data-tooltip", text);
+}
+
 let rotateBtnHideTimer = null;
 
 function showRotateBtn() {
   if (isRotatedLandscape || !rotateVideoBtn) return;
   rotateVideoBtn.classList.remove("hidden");
+  updateRotateBtnTooltip();
   clearTimeout(rotateBtnHideTimer);
   if (!videoPlayer.paused && !videoPlayer.ended) {
     rotateBtnHideTimer = setTimeout(() => {
@@ -890,6 +996,9 @@ if (rotateVideoBtn) {
     e.stopPropagation();
     toggleVideoRotation();
   };
+  rotateVideoBtn.addEventListener("mouseenter", () => {
+    updateRotateBtnTooltip();
+  });
 }
 
 if (exitLandscapeBtn) {
@@ -1019,7 +1128,9 @@ let clickCount = 0;
 
 function handleGesturePointer(clientX, clientY, isTouch = false) {
   if (!videoPlayer) return;
-  const rect = videoPlayer.getBoundingClientRect();
+  const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  const targetEl = isFs ? videoContainer : (videoPlayer || videoContainer);
+  const rect = targetEl ? targetEl.getBoundingClientRect() : { width: 0, height: 0, left: 0, top: 0 };
   if (rect.width <= 0 || rect.height <= 0) return;
 
   let relX, relY;
@@ -1098,6 +1209,12 @@ if (videoGestureLayer) {
     e.stopPropagation();
   });
 
+  videoGestureLayer.addEventListener("mousedown", (e) => {
+    if (e.detail > 1) {
+      e.preventDefault();
+    }
+  });
+
   videoGestureLayer.addEventListener("touchstart", (e) => {
     if (e.touches && e.touches.length === 1) {
       const t = e.touches[0];
@@ -1108,11 +1225,44 @@ if (videoGestureLayer) {
   videoGestureLayer.addEventListener("mousemove", showRotateBtn);
 }
 
-// Защитный перехватчик на самом элементе видео
+// Защитные перехватчики на самом элементе видео
 videoPlayer.addEventListener("dblclick", (e) => {
   e.preventDefault();
   e.stopPropagation();
+  e.stopImmediatePropagation();
+  handleGesturePointer(e.clientX, e.clientY, false);
+  return false;
 }, { capture: true });
+
+videoPlayer.addEventListener("mousedown", (e) => {
+  if (e.detail > 1) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+}, { capture: true });
+
+// Горячие клавиши на ПК (пробел: пауза/плей, стрелки: +/-5 сек, F: весь экран)
+window.addEventListener("keydown", (e) => {
+  if (document.activeElement === liveSearchInput) return;
+
+  if (e.key === "f" || e.key === "F" || e.key === "а" || e.key === "А") {
+    e.preventDefault();
+    toggleVideoRotation();
+  } else if (e.key === "ArrowRight") {
+    e.preventDefault();
+    performQuickSeek("right");
+  } else if (e.key === "ArrowLeft") {
+    e.preventDefault();
+    performQuickSeek("left");
+  } else if (e.key === " " && document.activeElement.tagName !== "BUTTON") {
+    e.preventDefault();
+    if (videoPlayer.paused) {
+      videoPlayer.play().catch(() => {});
+    } else {
+      videoPlayer.pause();
+    }
+  }
+});
 
 // Отправка файла в Telegram-чат (Point 3 & Point 8)
 sendActionBtn.onclick = async () => {
