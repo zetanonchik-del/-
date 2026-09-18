@@ -654,6 +654,16 @@ window.handleOpenFile = async function(fileId) {
     videoPlayer.play().catch(() => {});
     videoPartTitle.textContent = fileObj.title;
     notify(t("hwVideoLoaded"));
+  // Прямое скачивание архивов без лишней модалки
+  if (meta.type === "zip" || fname.endsWith(".zip") || fname.endsWith(".rar") || fname.endsWith(".7z") || fname.endsWith(".tar.gz") || fname.endsWith(".gz") || fname.endsWith(".tar")) {
+    const downloadUrl = `${API_BASE}/file/download/${fileObj.id}`;
+    const a = document.createElement("a");
+    a.href = downloadUrl;
+    a.download = fileObj.title || "archive.zip";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    notify(t("downloading") || "Fayl yuklab olinmoqda...");
     return;
   }
 
@@ -2116,10 +2126,11 @@ async function openUniversalViewer(fileObj) {
       return;
     }
 
-    // 7. Архивы или прочие форматы
+    // 7. Архивы или прочие форматы: прямое скачивание
     if (meta.type === "zip") {
       if (viewerLoading) viewerLoading.style.display = "none";
-      showFileCard(fileObj, "📦", "Файловый архив");
+      closeUniversalViewer();
+      window.location.href = `${API_BASE}/file/download/${fileObj.id}`;
       return;
     }
 
