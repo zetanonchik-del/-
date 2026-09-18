@@ -1126,31 +1126,26 @@ let lastTapTime = 0;
 let clickTimer = null;
 let clickCount = 0;
 
-function handleGesturePointer(clientX, clientY, isTouch = false) {
+let lastTouchTimestamp = 0;
+
+function handleGesturePointer(clientX, clientY) {
   if (!videoPlayer) return;
   const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
   const targetEl = isFs ? videoContainer : (videoPlayer || videoContainer);
   const rect = targetEl ? targetEl.getBoundingClientRect() : { width: 0, height: 0, left: 0, top: 0 };
   if (rect.width <= 0 || rect.height <= 0) return;
 
-  let relX, relY;
+  let relX;
   if (videoContainer && videoContainer.classList.contains("in-landscape-mode")) {
     relX = (clientY - rect.top) / rect.height;
-    relY = 1.0 - ((clientX - rect.left) / rect.width);
   } else {
     relX = (clientX - rect.left) / rect.width;
-    relY = (clientY - rect.top) / rect.height;
   }
 
-  let side = "right";
-  if (isTouch) {
-    if (relX < 0.38) side = "left";
-    else if (relX > 0.62) side = "right";
-    else side = "center";
-  } else {
-    // На ПК: четкое деление пополам (левая половина - назад, правая - вперед)
-    side = relX < 0.5 ? "left" : "right";
-  }
+  // СТРОГО 50 НА 50 ДЛЯ ВСЕХ УСТРОЙСТВ И РЕЖИМОВ (ПК, смартфоны, обычный и фуллскрин):
+  // Левые 50% (< 0.5) — ВСЕГДА перемотка назад (-5, -10, -15...)
+  // Правые 50% (>= 0.5) — ВСЕГДА перемотка вперед (+5, +10, +15...)
+  const side = relX < 0.5 ? "left" : "right";
 
   const now = Date.now();
   const timeDiff = now - lastTapTime;
@@ -1168,40 +1163,44 @@ function handleGesturePointer(clientX, clientY, isTouch = false) {
   if (clickCount === 1) {
     lastTapTime = now;
     clickTimer = setTimeout(() => {
-      // Одиночный клик (переключение пауза/воспроизведение на ПК)
+      // Одиночный клик: переключение пауза/воспроизведение
       clickCount = 0;
-      if (!isTouch) {
-        if (videoPlayer.paused) {
-          videoPlayer.play().catch(() => {});
-        } else {
-          videoPlayer.pause();
-        }
+      if (videoPlayer.paused) {
+        videoPlayer.play().catch(() => {});
+      } else {
+        videoPlayer.pause();
       }
       showRotateBtn();
     }, 240);
   } else if (clickCount >= 2) {
-    // Двойной клик / тап: мгновенная перемотка!
+    // Двойной клик / тап: мгновенная перемотка 50/50 (никогда не закрывает полноэкранный режим!)
     clearTimeout(clickTimer);
     clickCount = 0;
     lastTapTime = now;
-
-    if (side === "center" && isTouch) {
-      toggleVideoRotation();
-      triggerCenterFeedback();
-      quickSeekAccumulator = 0;
-      quickSeekSide = null;
-    } else {
-      performQuickSeek(side);
-    }
+    performQuickSeek(side);
   }
 }
 
 // Привязка к слою жестов поверх видео
 if (videoGestureLayer) {
+  videoGestureLayer.addEventListener("touchstart", (e) => {
+    if (e.touches && e.touches.length === 1) {
+      lastTouchTimestamp = Date.now();
+      const t = e.touches[0];
+      handleGesturePointer(t.clientX, t.clientY);
+    }
+  }, { passive: true });
+
   videoGestureLayer.addEventListener("click", (e) => {
+    // Защита от дублирования событий на сенсорных экранах (touch + synthetic click)
+    if (Date.now() - lastTouchTimestamp < 600) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     e.preventDefault();
     e.stopPropagation();
-    handleGesturePointer(e.clientX, e.clientY, false);
+    handleGesturePointer(e.clientX, e.clientY);
   });
 
   videoGestureLayer.addEventListener("dblclick", (e) => {
@@ -1215,13 +1214,6 @@ if (videoGestureLayer) {
     }
   });
 
-  videoGestureLayer.addEventListener("touchstart", (e) => {
-    if (e.touches && e.touches.length === 1) {
-      const t = e.touches[0];
-      handleGesturePointer(t.clientX, t.clientY, true);
-    }
-  }, { passive: true });
-
   videoGestureLayer.addEventListener("mousemove", showRotateBtn);
 }
 
@@ -1230,7 +1222,7 @@ videoPlayer.addEventListener("dblclick", (e) => {
   e.preventDefault();
   e.stopPropagation();
   e.stopImmediatePropagation();
-  handleGesturePointer(e.clientX, e.clientY, false);
+  handleGesturePointer(e.clientX, e.clientY);
   return false;
 }, { capture: true });
 
@@ -1240,6 +1232,15 @@ videoPlayer.addEventListener("mousedown", (e) => {
     e.stopPropagation();
   }
 }, { capture: true });
+
+if (videoContainer) {
+  videoContainer.addEventListener("dblclick", (e) => {
+    if (e.target !== exitLandscapeBtn && e.target !== rotateVideoBtn) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, { capture: true });
+}
 
 // Горячие клавиши на ПК (пробел: пауза/плей, стрелки: +/-5 сек, F: весь экран)
 window.addEventListener("keydown", (e) => {
