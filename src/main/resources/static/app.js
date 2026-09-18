@@ -1174,10 +1174,10 @@ async function parsePptxSlides(arrayBuffer) {
           });
 
           if (world && (paragraphs.length > 0 || fill || geom === "diamond")) {
-            const leftPct = (world.x / slideW) * 100;
-            const topPct = (world.y / slideH) * 100;
-            const widthPct = (world.w / slideW) * 100;
-            const heightPct = (world.h / slideH) * 100;
+            const leftPct = 1.0 + (world.x / slideW) * 98.0;
+            const topPct = 1.0 + (world.y / slideH) * 98.0;
+            const widthPct = (world.w / slideW) * 98.0;
+            const heightPct = (world.h / slideH) * 98.0;
 
             slideData.elements.push({
               type: "shape",
@@ -1202,10 +1202,10 @@ async function parsePptxSlides(arrayBuffer) {
           const blip = Array.from(child.querySelectorAll("*")).find(n => n.localName === "blip");
           const embedId = blip?.getAttribute("r:embed") || blip?.getAttribute("embed");
           if (world && embedId && imageMap[embedId]) {
-            const leftPct = (world.x / slideW) * 100;
-            const topPct = (world.y / slideH) * 100;
-            const widthPct = (world.w / slideW) * 100;
-            const heightPct = (world.h / slideH) * 100;
+            const leftPct = 1.0 + (world.x / slideW) * 98.0;
+            const topPct = 1.0 + (world.y / slideH) * 98.0;
+            const widthPct = (world.w / slideW) * 98.0;
+            const heightPct = (world.h / slideH) * 98.0;
             slideData.elements.push({
               type: "image",
               src: imageMap[embedId],
@@ -1230,10 +1230,10 @@ async function parsePptxSlides(arrayBuffer) {
           const head = Array.from(child.querySelectorAll("*")).find(n => n.localName === "headEnd");
           const hasArrow = (tail?.getAttribute("type") === "triangle" || head?.getAttribute("type") === "triangle");
 
-          const x1 = (xfrm.flipH ? (world.x + world.w) : world.x) / slideW * 1000;
-          const y1 = (xfrm.flipV ? (world.y + world.h) : world.y) / slideH * 562.5;
-          const x2 = (xfrm.flipH ? world.x : (world.x + world.w)) / slideW * 1000;
-          const y2 = (xfrm.flipV ? world.y : (world.y + world.h)) / slideH * 562.5;
+          const x1 = 10 + (xfrm.flipH ? (world.x + world.w) : world.x) / slideW * 980;
+          const y1 = 5.625 + (xfrm.flipV ? (world.y + world.h) : world.y) / slideH * 551.25;
+          const x2 = 10 + (xfrm.flipH ? world.x : (world.x + world.w)) / slideW * 980;
+          const y2 = 5.625 + (xfrm.flipV ? world.y : (world.y + world.h)) / slideH * 551.25;
 
           slideData.connectors.push({
             geom: geom,
@@ -1266,10 +1266,10 @@ async function parsePptxSlides(arrayBuffer) {
               if (rCells.length > 0) tableRows.push(rCells);
             });
             if (tableRows.length > 0) {
-              const leftPct = (world.x / slideW) * 100;
-              const topPct = (world.y / slideH) * 100;
-              const widthPct = (world.w / slideW) * 100;
-              const heightPct = (world.h / slideH) * 100;
+              const leftPct = 1.0 + (world.x / slideW) * 98.0;
+              const topPct = 1.0 + (world.y / slideH) * 98.0;
+              const widthPct = (world.w / slideW) * 98.0;
+              const heightPct = (world.h / slideH) * 98.0;
               slideData.elements.push({
                 type: "table",
                 rows: tableRows,
@@ -1378,7 +1378,11 @@ function buildSlideCardHtml(slide, totalSlides) {
             style += `color:#111827;`;
           }
           if (p.sizePt) {
-            style += `font-size:clamp(8px, ${(p.sizePt * 0.12).toFixed(2)}cqw, ${(p.sizePt * 1.15).toFixed(1)}px);`;
+            style += `font-size:clamp(7px, ${(p.sizePt * 0.12).toFixed(2)}cqw, ${(p.sizePt * 1.15).toFixed(1)}px);`;
+          }
+          const isShort = p.text.length <= 22 || !p.text.includes(" ");
+          if (isShort) {
+            style += `white-space:nowrap;`;
           }
           const content = p.bold ? `<strong>${escapeHtml(p.text)}</strong>` : escapeHtml(p.text);
           return `<div class="pptx-text-p" style="${style}">${content}</div>`;
@@ -1404,18 +1408,12 @@ function buildSlideCardHtml(slide, totalSlides) {
     }).join("");
   }
 
-  const badgeText = t("slideBadge", slide.index, totalSlides);
-
+  // Full-width borderless sheet like PDF, with discreet floating badge:
   return `
-    <div class="pptx-slide-card" data-slide-num="${slide.index}">
-      <div class="pptx-slide-header-bar">
-        <span class="pptx-slide-badge">${badgeText}</span>
-        ${slide.title ? `<span class="pptx-slide-title-preview">${escapeHtml(slide.title)}</span>` : ""}
-      </div>
-      <div class="pptx-slide-canvas" style="aspect-ratio:${aspectRatio};">
-        ${connectorsSvg}
-        ${elementsHtml}
-      </div>
+    <div class="pptx-slide-canvas" data-slide-num="${slide.index}" style="aspect-ratio:${aspectRatio};">
+      <div class="pptx-slide-floating-badge">${slide.index} / ${totalSlides}</div>
+      ${connectorsSvg}
+      ${elementsHtml}
     </div>
   `;
 }
@@ -1425,15 +1423,30 @@ function updatePptxView() {
   const total = activePptxSlides.length;
 
   if (isPptxAllMode) {
-    // Режим "Все слайды"
+    // Режим "Все слайды" - полноэкранный список как в PDF
     pptxViewerContainer.innerHTML = activePptxSlides.map(s => buildSlideCardHtml(s, total)).join("");
-    pptxSlideInfo.textContent = t("allSlidesBadge", total);
+    pptxSlideInfo.textContent = `1 / ${total}`;
     pptxPrevSlide.disabled = true;
     pptxNextSlide.disabled = true;
     pptxToggleMode.textContent = "📑";
     pptxToggleMode.title = t("singleSlide");
+
+    fileViewerBody.onscroll = () => {
+      if (isPptxAllMode && activePptxSlides.length > 0) {
+        const canvases = pptxViewerContainer.querySelectorAll(".pptx-slide-canvas");
+        const currentScroll = fileViewerBody.scrollTop + 140;
+        let visibleSlide = 1;
+        canvases.forEach(c => {
+          if (c.offsetTop <= currentScroll) {
+            visibleSlide = c.dataset.slideNum || 1;
+          }
+        });
+        pptxSlideInfo.textContent = `${visibleSlide} / ${total}`;
+      }
+    };
   } else {
     // Режим "По слайдам"
+    fileViewerBody.onscroll = null;
     const curSlide = activePptxSlides[currentPptxSlideIdx] || activePptxSlides[0];
     pptxViewerContainer.innerHTML = buildSlideCardHtml(curSlide, total);
     pptxSlideInfo.textContent = `${currentPptxSlideIdx + 1} / ${total}`;
