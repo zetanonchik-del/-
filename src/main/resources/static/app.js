@@ -21,24 +21,27 @@ const I18N = {
     connectError: "Не удалось подключиться к серверу",
     noVideo: "Нет видео",
     videoCount: (i, n) => `Видео: ${i}/${n}`,
-    tabHw: "📝 Домашка",
-    tabPdf: "📄 Конспекты PDF",
-    tabZip: "📦 Исходный код",
+    videoPart: (i) => `${i}-я часть`,
+    tabHw: "Домашка",
+    tabPdf: "Конспекты PDF",
+    tabZip: "Исходный код",
     fileCount: (i, n) => `Файл ${i}/${n}`,
     attachedFile: (title) => `📎 Прикрепленный файл: ${title}`,
     noHomeworkText: "Письменное задание отсутствует.",
-    openPdfBtn: "👁 Открыть PDF",
-    openPptBtn: "👁 Смотреть презентацию",
-    openDocBtn: "👁 Открыть документ",
-    openSheetBtn: "👁 Открыть таблицу",
-    readTextBtn: "👁 Читать текст",
-    viewImageBtn: "👁 Просмотр фото",
-    playAudioBtn: "🎵 Слушать аудио",
-    watchVideoBtn: "▶️ Смотреть видео",
-    downloadZipBtn: "📥 Скачать ZIP",
-    downloadFile: "📥 Скачать файл",
-    openFileBtn: "👁 Открыть файл",
-    sendToChatBtn: "💬 Отправить в чат",
+    openPdfBtn: "Открыть PDF",
+    openPptBtn: "Смотреть презентацию",
+    openDocBtn: "Открыть документ",
+    openSheetBtn: "Открыть таблицу",
+    readMarkdownBtn: "Читать задание",
+    readTextBtn: "Читать текст",
+    viewImageBtn: "Просмотр фото",
+    playAudioBtn: "Слушать аудио",
+    watchVideoBtn: "Смотреть видео",
+    downloadZipBtn: "Скачать ZIP",
+    downloadFile: "Скачать файл",
+    openFileBtn: "Открыть файл",
+    openBtn: "Открыть",
+    sendToChatBtn: "Отправить в чат",
     sendingBtn: "Отправка в чат...",
     sentOk: "✅ Файл отправлен в ваш диалог с ботом!",
     sendErr: "Ошибка при отправке файла.",
@@ -56,10 +59,10 @@ const I18N = {
     slideBadge: (i, total) => `Слайд ${i} из ${total}`,
     prevSlideBtn: "◀ Предыдущий слайд",
     nextSlideBtn: "Следующий слайд ▶",
-    copyCode: "📋 Скопировать",
+    copyCode: "Скопировать",
     copied: "✅ Скопировано!",
-    allSlides: "📜 Все слайды",
-    singleSlide: "📑 По слайдам",
+    allSlides: "Все слайды",
+    singleSlide: "По слайдам",
     pptFormatNotice: "Презентация Microsoft PowerPoint (.ppt). Вы можете отправить её в диалог с ботом или скачать:",
   },
   uz: {
@@ -73,24 +76,27 @@ const I18N = {
     connectError: "Serverga ulanib bo'lmadi",
     noVideo: "Video yo'q",
     videoCount: (i, n) => `Video: ${i}/${n}`,
-    tabHw: "📝 Uyga vazifa",
-    tabPdf: "📄 Taqdimotlar PDF",
-    tabZip: "📦 Dars fayllari",
+    videoPart: (i) => `${i}-qism`,
+    tabHw: "Uyga vazifa",
+    tabPdf: "Taqdimotlar PDF",
+    tabZip: "Dars fayllari",
     fileCount: (i, n) => `Fayl ${i}/${n}`,
     attachedFile: (title) => `📎 Ilova qilingan fayl: ${title}`,
     noHomeworkText: "Yozma topshiriq mavjud emas.",
-    openPdfBtn: "👁 PDF ochish",
-    openPptBtn: "👁 Taqdimotni ochish",
-    openDocBtn: "👁 Hujjatni ochish",
-    openSheetBtn: "👁 Jadvalni ochish",
-    readTextBtn: "👁 Matnni o'qish",
-    viewImageBtn: "👁 Rasmni ko'rish",
-    playAudioBtn: "🎵 Audioni tinglash",
-    watchVideoBtn: "▶️ Videoni ko'rish",
-    downloadZipBtn: "📥 ZIP yuklab olish",
-    downloadFile: "📥 Faylni yuklab olish",
-    openFileBtn: "👁 Faylni ochish",
-    sendToChatBtn: "💬 Chatga yuborish",
+    openPdfBtn: "PDF ochish",
+    openPptBtn: "Taqdimotni ochish",
+    openDocBtn: "Hujjatni ochish",
+    openSheetBtn: "Jadvalni ochish",
+    readMarkdownBtn: "Topshiriqni o'qish",
+    readTextBtn: "Matnni o'qish",
+    viewImageBtn: "Rasmni ko'rish",
+    playAudioBtn: "Audioni tinglash",
+    watchVideoBtn: "Videoni ko'rish",
+    downloadZipBtn: "ZIP yuklab olish",
+    downloadFile: "Faylni yuklab olish",
+    openFileBtn: "Faylni ochish",
+    openBtn: "Ochish",
+    sendToChatBtn: "Chatga yuborish",
     sendingBtn: "Yuborilmoqda...",
     sentOk: "✅ Fayl botga yuborildi!",
     sendErr: "Faylni yuborishda xatolik.",
@@ -108,10 +114,10 @@ const I18N = {
     slideBadge: (i, total) => `Slayd ${i} / ${total}`,
     prevSlideBtn: "◀ Oldingi slayd",
     nextSlideBtn: "Keyingi slayd ▶",
-    copyCode: "📋 Nusxalash",
+    copyCode: "Nusxalash",
     copied: "✅ Nusxalandi!",
-    allSlides: "📜 Barcha slaydlar",
-    singleSlide: "📑 Slaydma-slayd",
+    allSlides: "Barcha slaydlar",
+    singleSlide: "Slaydma-slayd",
     pptFormatNotice: "Microsoft PowerPoint (.ppt) taqdimoti. Uni bot chatiga yuborishingiz yoki yuklab olishingiz mumkin:",
   },
   en: {
@@ -125,24 +131,27 @@ const I18N = {
     connectError: "Could not connect to the server",
     noVideo: "No video",
     videoCount: (i, n) => `Video: ${i}/${n}`,
-    tabHw: "📝 Homework",
-    tabPdf: "📄 Slides PDF",
-    tabZip: "📦 Source Code",
+    videoPart: (i) => `Part ${i}`,
+    tabHw: "Homework",
+    tabPdf: "Slides PDF",
+    tabZip: "Source Code",
     fileCount: (i, n) => `File ${i}/${n}`,
     attachedFile: (title) => `📎 Attached file: ${title}`,
     noHomeworkText: "No written assignment.",
-    openPdfBtn: "👁 Open PDF",
-    openPptBtn: "👁 View presentation",
-    openDocBtn: "👁 Open document",
-    openSheetBtn: "👁 Open spreadsheet",
-    readTextBtn: "👁 Read text",
-    viewImageBtn: "👁 View image",
-    playAudioBtn: "🎵 Play audio",
-    watchVideoBtn: "▶️ Watch video",
-    downloadZipBtn: "📥 Download ZIP",
-    downloadFile: "📥 Download file",
-    openFileBtn: "👁 Open file",
-    sendToChatBtn: "💬 Send to chat",
+    openPdfBtn: "Open PDF",
+    openPptBtn: "View presentation",
+    openDocBtn: "Open document",
+    openSheetBtn: "Open spreadsheet",
+    readMarkdownBtn: "Read assignment",
+    readTextBtn: "Read text",
+    viewImageBtn: "View image",
+    playAudioBtn: "Play audio",
+    watchVideoBtn: "Watch video",
+    downloadZipBtn: "Download ZIP",
+    downloadFile: "Download file",
+    openFileBtn: "Open file",
+    openBtn: "Open",
+    sendToChatBtn: "Send to chat",
     sendingBtn: "Sending...",
     sentOk: "✅ File sent to your chat with the bot!",
     sendErr: "Error sending the file.",
@@ -160,10 +169,10 @@ const I18N = {
     slideBadge: (i, total) => `Slide ${i} / ${total}`,
     prevSlideBtn: "◀ Previous slide",
     nextSlideBtn: "Next slide ▶",
-    copyCode: "📋 Copy",
+    copyCode: "Copy",
     copied: "✅ Copied!",
-    allSlides: "📜 All slides",
-    singleSlide: "📑 By slide",
+    allSlides: "All slides",
+    singleSlide: "By slide",
     pptFormatNotice: "Microsoft PowerPoint (.ppt) presentation. You can send it to the bot chat or download it:",
   },
 };
@@ -265,12 +274,12 @@ function applyStaticTranslations() {
   document.querySelectorAll(".lesson-box label").forEach(el => el.textContent = t("lessonLabel"));
   liveSearchInput.placeholder = t("searchPlaceholder");
 
-  const tabHw = document.querySelector('.tab-item[data-tab="hw"]');
-  const tabPdf = document.querySelector('.tab-item[data-tab="pdf"]');
-  const tabZip = document.querySelector('.tab-item[data-tab="zip"]');
-  if (tabHw) tabHw.textContent = t("tabHw");
-  if (tabPdf) tabPdf.textContent = t("tabPdf");
-  if (tabZip) tabZip.textContent = t("tabZip");
+  const tabHwTitle = document.getElementById("tabHwTitle");
+  const tabPdfTitle = document.getElementById("tabPdfTitle");
+  const tabZipTitle = document.getElementById("tabZipTitle");
+  if (tabHwTitle) tabHwTitle.textContent = t("tabHw");
+  if (tabPdfTitle) tabPdfTitle.textContent = t("tabPdf");
+  if (tabZipTitle) tabZipTitle.textContent = t("tabZip");
 
   if (!currentSelectedLesson) {
     lessonHeading.textContent = t("selectLessonPrompt");
@@ -489,13 +498,47 @@ function updateTabsVisibility() {
 
 function updateVideoControls() {
   const videos = currentSelectedLesson?.videos || [];
+  const chipsContainer = document.getElementById("videoChipsContainer");
+  const fallbackNav = document.querySelector(".video-nav-fallback");
+
   if (videos.length === 0) {
     videoPlayer.removeAttribute("src");
     videoPlayer.load();
+    if (chipsContainer) chipsContainer.innerHTML = "";
+    if (fallbackNav) fallbackNav.style.display = "none";
     videoPartTitle.textContent = t("noVideo");
     prevVideoBtn.disabled = true;
     nextVideoBtn.disabled = true;
     return;
+  }
+
+  // Segmented video chips
+  if (chipsContainer) {
+    chipsContainer.innerHTML = "";
+    if (videos.length > 1) {
+      videos.forEach((v, idx) => {
+        const chip = document.createElement("button");
+        chip.className = `video-chip ${idx === currentVideoIdx ? "active" : ""}`;
+        chip.innerHTML = `
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>${t("videoPart", idx + 1)}</span>
+        `;
+        chip.onclick = () => {
+          if (currentVideoIdx !== idx) {
+            currentVideoIdx = idx;
+            updateVideoControls();
+            videoPlayer.play().catch(() => {});
+          }
+        };
+        chipsContainer.appendChild(chip);
+      });
+      chipsContainer.style.display = "flex";
+      if (fallbackNav) fallbackNav.style.display = "none";
+    } else {
+      chipsContainer.style.display = "none";
+    }
   }
 
   prevVideoBtn.disabled = (currentVideoIdx === 0);
@@ -547,115 +590,182 @@ function escapeHtml(str) {
 
 function getFileMeta(fileName) {
   const fname = (fileName || "").toLowerCase().trim();
+  if (fname.endsWith(".md")) {
+    return { type: "markdown", icon: "📝", btnKey: "readMarkdownBtn", ext: "MD" };
+  }
   if (fname.endsWith(".pptx") || fname.endsWith(".ppt") || fname.endsWith(".odp") || fname.endsWith(".pps") || fname.endsWith(".ppsx")) {
-    return { type: "pptx", icon: "📊", btnKey: "openPptBtn" };
+    return { type: "pptx", icon: "📊", btnKey: "openPptBtn", ext: "PPTX" };
   }
   if (fname.endsWith(".pdf")) {
-    return { type: "pdf", icon: "📄", btnKey: "openPdfBtn" };
+    return { type: "pdf", icon: "📄", btnKey: "openPdfBtn", ext: "PDF" };
   }
   if (fname.endsWith(".docx") || fname.endsWith(".doc") || fname.endsWith(".odt") || fname.endsWith(".rtf")) {
-    return { type: "docx", icon: "📝", btnKey: "openDocBtn" };
+    return { type: "docx", icon: "📝", btnKey: "openDocBtn", ext: "DOCX" };
   }
   if (fname.endsWith(".xlsx") || fname.endsWith(".xls") || fname.endsWith(".csv") || fname.endsWith(".ods")) {
-    return { type: "xlsx", icon: "📈", btnKey: "openSheetBtn" };
+    return { type: "xlsx", icon: "📈", btnKey: "openSheetBtn", ext: "XLSX" };
   }
-  if (fname.endsWith(".txt") || fname.endsWith(".log") || fname.endsWith(".md") || fname.endsWith(".json") ||
+  if (fname.endsWith(".txt") || fname.endsWith(".log") || fname.endsWith(".json") ||
       fname.endsWith(".xml") || fname.endsWith(".java") || fname.endsWith(".py") || fname.endsWith(".js") ||
       fname.endsWith(".ts") || fname.endsWith(".html") || fname.endsWith(".css") || fname.endsWith(".sql") ||
       fname.endsWith(".c") || fname.endsWith(".cpp") || fname.endsWith(".h") || fname.endsWith(".cs") ||
       fname.endsWith(".sh") || fname.endsWith(".bat") || fname.endsWith(".yml") || fname.endsWith(".yaml")) {
-    return { type: "text", icon: "📋", btnKey: "readTextBtn" };
+    return { type: "text", icon: "📋", btnKey: "readTextBtn", ext: fname.split('.').pop().toUpperCase() };
   }
   if (fname.endsWith(".png") || fname.endsWith(".jpg") || fname.endsWith(".jpeg") || fname.endsWith(".webp") ||
       fname.endsWith(".gif") || fname.endsWith(".svg") || fname.endsWith(".bmp")) {
-    return { type: "image", icon: "🖼️", btnKey: "viewImageBtn" };
+    return { type: "image", icon: "🖼️", btnKey: "viewImageBtn", ext: "IMG" };
   }
   if (fname.endsWith(".mp4") || fname.endsWith(".mov") || fname.endsWith(".webm") || fname.endsWith(".mkv") || fname.endsWith(".avi")) {
-    return { type: "video", icon: "🎬", btnKey: "watchVideoBtn" };
+    return { type: "video", icon: "🎬", btnKey: "watchVideoBtn", ext: "VIDEO" };
   }
   if (fname.endsWith(".mp3") || fname.endsWith(".wav") || fname.endsWith(".ogg") || fname.endsWith(".m4a") || fname.endsWith(".flac")) {
-    return { type: "audio", icon: "🎵", btnKey: "playAudioBtn" };
+    return { type: "audio", icon: "🎵", btnKey: "playAudioBtn", ext: "AUDIO" };
   }
   if (fname.endsWith(".zip") || fname.endsWith(".rar") || fname.endsWith(".7z") || fname.endsWith(".tar.gz") || fname.endsWith(".gz")) {
-    return { type: "zip", icon: "📦", btnKey: "downloadZipBtn" };
+    return { type: "zip", icon: "📦", btnKey: "downloadZipBtn", ext: "ZIP" };
   }
-  return { type: "generic", icon: "📎", btnKey: "openFileBtn" };
+  return { type: "generic", icon: "📎", btnKey: "openFileBtn", ext: "FILE" };
 }
+
+window.handleOpenFile = async function(fileId) {
+  const l = currentSelectedLesson;
+  if (!l) return;
+  const allCurrentFiles = [
+    ...(l.hwFiles || []),
+    ...(l.pdfs || []),
+    ...(l.zips || [])
+  ];
+  const fileObj = allCurrentFiles.find(f => String(f.id) === String(fileId));
+  if (!fileObj) return;
+
+  const fname = (fileObj.title || "").toLowerCase();
+  const meta = getFileMeta(fname);
+
+  if (meta.type === "video" || fileObj.isVideo || fname.endsWith(".mp4") || fname.endsWith(".mov")) {
+    videoPlayer.src = `${API_BASE}/video/stream/${fileObj.id}`;
+    videoPlayer.load();
+    videoPlayer.play().catch(() => {});
+    videoPartTitle.textContent = fileObj.title;
+    notify(t("hwVideoLoaded"));
+    return;
+  }
+
+  const url = `${API_BASE}/file/view/${fileObj.id}`;
+  const ready = await fileExistsOnServer(url);
+  if (!ready) {
+    notify(t("fileNotReadyYet"));
+    return;
+  }
+  openUniversalViewer(fileObj);
+};
+
+window.handleSendFileToChat = async function(fileId, btnEl) {
+  const uid = getTelegramUserId();
+  if (!uid) {
+    notify(t("openInTelegram"));
+    return;
+  }
+
+  let originalHtml = "";
+  if (btnEl) {
+    btnEl.disabled = true;
+    originalHtml = btnEl.innerHTML;
+    btnEl.textContent = t("sendingBtn");
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/send-to-chat?userId=${uid}&fileId=${fileId}`, { method: "POST" });
+    if (res.ok) {
+      notify(t("sentOk"));
+    } else {
+      notify(t("sendErr"));
+    }
+  } catch (e) {
+    notify(t("netErr"));
+  } finally {
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.innerHTML = originalHtml;
+    }
+  }
+};
 
 function updateTabContent() {
   if (!currentSelectedLesson) return;
   const l = currentSelectedLesson;
+  const filesListContainer = document.getElementById("filesListContainer");
 
-  if (activeTab === "hw") {
-    const hwList = l.hwFiles || [];
-    const hasMultiple = hwList.length > 1;
-    subPartsBar.style.display = hasMultiple ? "flex" : "none";
+  let files = [];
+  if (activeTab === "hw") files = l.hwFiles || [];
+  else if (activeTab === "pdf") files = l.pdfs || [];
+  else if (activeTab === "zip") files = l.zips || [];
 
-    if (hwList.length > 0) {
-      const curHw = hwList[currentHwFileIdx] || hwList[0];
-      const meta = getFileMeta(curHw.title);
-      fileTitleHeader.textContent = `${meta.icon} ${curHw.title}`;
-      subPartTitle.textContent = t("fileCount", currentHwFileIdx + 1, hwList.length);
-      prevSubPartBtn.disabled = (currentHwFileIdx === 0);
-      nextSubPartBtn.disabled = (currentHwFileIdx === hwList.length - 1);
-      openDirectBtn.style.display = "block";
-      openDirectBtn.textContent = t(meta.btnKey);
+  // Hide old single-file fallback bar & buttons
+  if (subPartsBar) subPartsBar.style.display = "none";
+  if (fileTitleHeader) fileTitleHeader.style.display = "none";
+  const oldActionRow = document.querySelector(".action-buttons-row");
+  if (oldActionRow) oldActionRow.style.display = "none";
 
-      sendActionBtn.style.display = "block";
-      sendActionBtn.textContent = t("sendToChatBtn");
+  // Render cards in filesListContainer
+  if (filesListContainer) {
+    filesListContainer.innerHTML = "";
+    if (files.length > 0) {
+      files.forEach((f) => {
+        const meta = getFileMeta(f.title);
+        const card = document.createElement("div");
+        card.className = "file-item-card";
+        card.innerHTML = `
+          <div class="file-item-left">
+            <div class="file-icon-badge">${meta.icon}</div>
+            <div class="file-item-info">
+              <span class="file-item-name" title="${escapeHtml(f.title)}">${escapeHtml(f.title)}</span>
+              <span class="file-item-ext">${meta.ext}</span>
+            </div>
+          </div>
+          <div class="file-item-actions">
+            <button class="file-action-btn btn-open-primary" onclick="handleOpenFile(${f.id})">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <span>${t(meta.btnKey) || t("openBtn")}</span>
+            </button>
+            <button class="file-action-btn btn-chat-secondary" onclick="handleSendFileToChat(${f.id}, this)">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <span>${t("sendToChatBtn")}</span>
+            </button>
+          </div>
+        `;
+        filesListContainer.appendChild(card);
+      });
+      filesListContainer.style.display = "flex";
     } else {
-      fileTitleHeader.textContent = "";
-      openDirectBtn.style.display = "none";
-      sendActionBtn.style.display = "none";
+      filesListContainer.style.display = "none";
     }
+  }
 
+  // Homework text handling
+  if (activeTab === "hw") {
     if (l.homeworkText && l.homeworkText.trim()) {
       mainContentBox.classList.remove("hidden");
+      mainContentBox.style.display = "block";
       mainContentBox.textContent = l.homeworkText;
     } else {
-      mainContentBox.classList.add("hidden");
-      mainContentBox.textContent = "";
+      if (files.length === 0) {
+        mainContentBox.classList.remove("hidden");
+        mainContentBox.style.display = "block";
+        mainContentBox.textContent = t("noHomeworkText");
+      } else {
+        mainContentBox.classList.add("hidden");
+        mainContentBox.style.display = "none";
+      }
     }
-  }
-  else if (activeTab === "pdf") {
-    const pdfs = l.pdfs || [];
-    subPartsBar.style.display = (pdfs.length > 1) ? "flex" : "none";
-
+  } else {
     mainContentBox.classList.add("hidden");
-    mainContentBox.textContent = "";
-
-    if (pdfs.length > 0) {
-      const curPdf = pdfs[currentPdfIdx] || pdfs[0];
-      const meta = getFileMeta(curPdf.title);
-      fileTitleHeader.textContent = `${meta.icon} ${curPdf.title}`;
-      subPartTitle.textContent = t("fileCount", currentPdfIdx + 1, pdfs.length);
-      prevSubPartBtn.disabled = (currentPdfIdx === 0);
-      nextSubPartBtn.disabled = (currentPdfIdx === pdfs.length - 1);
-      openDirectBtn.style.display = "block";
-      openDirectBtn.textContent = t(meta.btnKey);
-      sendActionBtn.style.display = "block";
-      sendActionBtn.textContent = t("sendToChatBtn");
-    }
-  }
-  else if (activeTab === "zip") {
-    const zips = l.zips || [];
-    subPartsBar.style.display = (zips.length > 1) ? "flex" : "none";
-
-    mainContentBox.classList.add("hidden");
-    mainContentBox.textContent = "";
-
-    if (zips.length > 0) {
-      const curZip = zips[currentZipIdx] || zips[0];
-      const meta = getFileMeta(curZip.title);
-      fileTitleHeader.textContent = `${meta.icon} ${curZip.title}`;
-      subPartTitle.textContent = t("fileCount", currentZipIdx + 1, zips.length);
-      prevSubPartBtn.disabled = (currentZipIdx === 0);
-      nextSubPartBtn.disabled = (currentZipIdx === zips.length - 1);
-      openDirectBtn.style.display = "block";
-      openDirectBtn.textContent = t(meta.btnKey);
-      sendActionBtn.style.display = "block";
-      sendActionBtn.textContent = t("sendToChatBtn");
-    }
+    mainContentBox.style.display = "none";
   }
 }
 
@@ -752,6 +862,11 @@ function resetViewerContainers() {
   if (docViewerContainer) {
     docViewerContainer.style.display = "none";
     docViewerContainer.innerHTML = "";
+  }
+  const mdContainer = document.getElementById("markdownViewerContainer");
+  if (mdContainer) {
+    mdContainer.style.display = "none";
+    mdContainer.innerHTML = "";
   }
   if (sheetViewerContainer) {
     sheetViewerContainer.style.display = "none";
@@ -1677,7 +1792,166 @@ if (codeCopyBtn) {
 }
 
 // ---------------------------------------------------------------------------
-// 5. Главный универсальный просмотрщик (openUniversalViewer)
+// 5. Парсер и просмотрщик Markdown (.md) с таблицами, кодом и копированием
+// ---------------------------------------------------------------------------
+function renderMarkdown(md) {
+  if (!md) return "";
+  let text = md.replace(/\r\n/g, "\n");
+
+  // Code blocks: ```lang ... ```
+  const codeBlocks = [];
+  text = text.replace(/```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g, (match, lang, code) => {
+    const idx = codeBlocks.length;
+    const escaped = escapeHtml(code.trimEnd());
+    const langLabel = lang ? escapeHtml(lang) : "code";
+    codeBlocks.push(`
+      <div class="md-code-block">
+        <div class="md-code-header">
+          <span class="md-code-lang">${langLabel}</span>
+          <button class="md-copy-btn" onclick="copyBlockCode(this)">${t("copyCode") || "Nusxalash"}</button>
+        </div>
+        <pre><code class="language-${langLabel}">${escaped}</code></pre>
+      </div>
+    `);
+    return `@@CODE_BLOCK_${idx}@@`;
+  });
+
+  // Inline code: `code`
+  const inlineCodes = [];
+  text = text.replace(/`([^`\n]+)`/g, (match, code) => {
+    const idx = inlineCodes.length;
+    inlineCodes.push(`<code>${escapeHtml(code)}</code>`);
+    return `@@INLINE_CODE_${idx}@@`;
+  });
+
+  function formatInline(str) {
+    let s = str;
+    s = s.replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>');
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    s = s.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    s = s.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+    s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return s;
+  }
+
+  const lines = text.split("\n");
+  const processedLines = [];
+  let inTable = false;
+  let tableRows = [];
+
+  function flushTable() {
+    if (tableRows.length === 0) return;
+    let html = `<div class="md-table-wrap"><table>`;
+    let isHeader = true;
+    for (let r = 0; r < tableRows.length; r++) {
+      const row = tableRows[r].trim();
+      if (/^\|?(\s*:?-+:?\s*\|?)+$/.test(row)) {
+        isHeader = false;
+        continue;
+      }
+      const cols = row.split("|").slice(1, -1);
+      if (cols.length === 0) continue;
+      const tag = isHeader ? "th" : "td";
+      html += `<tr>`;
+      cols.forEach(c => {
+        html += `<${tag}>${formatInline(c.trim())}</${tag}>`;
+      });
+      html += `</tr>`;
+      if (r === 0) isHeader = false;
+    }
+    html += `</table></div>`;
+    processedLines.push(html);
+    tableRows = [];
+    inTable = false;
+  }
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim().startsWith("|") && line.trim().endsWith("|")) {
+      inTable = true;
+      tableRows.push(line);
+      continue;
+    } else if (inTable) {
+      flushTable();
+    }
+
+    if (/^#### (.*)$/.test(line)) {
+      processedLines.push(`<h4>${formatInline(line.replace(/^#### /, ""))}</h4>`);
+    } else if (/^### (.*)$/.test(line)) {
+      processedLines.push(`<h3>${formatInline(line.replace(/^### /, ""))}</h3>`);
+    } else if (/^## (.*)$/.test(line)) {
+      processedLines.push(`<h2>${formatInline(line.replace(/^## /, ""))}</h2>`);
+    } else if (/^# (.*)$/.test(line)) {
+      processedLines.push(`<h1>${formatInline(line.replace(/^# /, ""))}</h1>`);
+    } else if (/^---$/.test(line.trim()) || /^___$/.test(line.trim())) {
+      processedLines.push(`<hr>`);
+    } else if (/^>\s?(.*)$/.test(line)) {
+      processedLines.push(`<blockquote>${formatInline(line.replace(/^>\s?/, ""))}</blockquote>`);
+    } else if (/^[-*]\s+(.*)$/.test(line)) {
+      processedLines.push(`<li>${formatInline(line.replace(/^[-*]\s+/, ""))}</li>`);
+    } else if (/^\d+\.\s+(.*)$/.test(line)) {
+      processedLines.push(`<li>${formatInline(line.replace(/^\d+\.\s+/, ""))}</li>`);
+    } else if (line.trim() === "") {
+      processedLines.push(``);
+    } else {
+      processedLines.push(`<p>${formatInline(line)}</p>`);
+    }
+  }
+  if (inTable) {
+    flushTable();
+  }
+
+  let finalHtml = processedLines.join("\n");
+  finalHtml = finalHtml.replace(/(<li>[\s\S]*?<\/li>\s*)+/g, (m) => `<ul>${m}</ul>`);
+  finalHtml = finalHtml.replace(/@@INLINE_CODE_(\d+)@@/g, (m, idx) => inlineCodes[idx] || "");
+  finalHtml = finalHtml.replace(/@@CODE_BLOCK_(\d+)@@/g, (m, idx) => codeBlocks[idx] || "");
+
+  return finalHtml;
+}
+
+window.copyBlockCode = async function(btn) {
+  try {
+    const block = btn.closest(".md-code-block");
+    const codeEl = block?.querySelector("code");
+    if (!codeEl) return;
+    const text = codeEl.textContent || "";
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+    }
+    const orig = btn.textContent;
+    btn.textContent = t("copied") || "✅ Nusxalandi!";
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  } catch (e) {
+    notify(t("copied"));
+  }
+};
+
+async function fetchFileWithRetry(url, maxRetries = 5, delayMs = 1200) {
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    const res = await fetch(url);
+    if (res.status === 202) {
+      if (attempt < maxRetries) {
+        if (viewerLoadingText) {
+          viewerLoadingText.textContent = t("fileNotReadyYet") || t("docLoading");
+        }
+        await new Promise(r => setTimeout(r, delayMs));
+        continue;
+      }
+    }
+    return res;
+  }
+  return await fetch(url);
+}
+
+// ---------------------------------------------------------------------------
+// 6. Главный универсальный просмотрщик (openUniversalViewer)
 // ---------------------------------------------------------------------------
 async function openUniversalViewer(fileObj) {
   resetViewerContainers();
@@ -1695,8 +1969,26 @@ async function openUniversalViewer(fileObj) {
   const meta = getFileMeta(fileObj.title);
 
   try {
-    // 1. Презентация PowerPoint (.pptx)
-    if (meta.type === "pptx") {
+    // 0. Markdown (.md)
+    if (meta.type === "markdown") {
+      const res = await fetchFileWithRetry(url);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const mdText = await res.text();
+      if (!mdText || mdText.trim().length === 0) {
+        throw new Error("Empty markdown file");
+      }
+      const html = renderMarkdown(mdText);
+      const mdContainer = document.getElementById("markdownViewerContainer");
+      if (mdContainer) {
+        mdContainer.innerHTML = html;
+        mdContainer.style.display = "block";
+      }
+      if (viewerLoading) viewerLoading.style.display = "none";
+      return;
+    }
+
+    // 1. Презентация PowerPoint (.pptx) или PDF (.pdf)
+    if (meta.type === "pptx" || meta.type === "pdf") {
       const fname = (fileObj.title || "").toLowerCase();
       if (fname.endsWith(".ppt") && !fname.endsWith(".pptx")) {
         // Старый бинарный формат PowerPoint 97-2003 (.ppt)
@@ -1704,9 +1996,23 @@ async function openUniversalViewer(fileObj) {
         showFileCard(fileObj, "📊", t("pptFormatNotice"));
         return;
       }
-      const res = await fetch(url);
+      const res = await fetchFileWithRetry(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
       const ab = await res.arrayBuffer();
+
+      // Векторный ли это PDF (включая сконвертированные на сервере презентации для 100% точности)
+      const u8 = new Uint8Array(ab.slice(0, 5));
+      const isPdfBytes = (u8[0] === 0x25 && u8[1] === 0x50 && u8[2] === 0x44 && u8[3] === 0x46); // %PDF-
+      const isPdfContentType = res.headers?.get("content-type")?.includes("application/pdf");
+
+      if (isPdfBytes || isPdfContentType || meta.type === "pdf") {
+        activePdfArrayBuffer = ab;
+        activePdfScale = 1.0;
+        await renderPdfDocument(activePdfArrayBuffer, 1.0);
+        return;
+      }
+
+      // Если не PDF, парсим PPTX через DrawingML
       activePptxSlides = await parsePptxSlides(ab);
       currentPptxSlideIdx = 0;
       isPptxAllMode = true;
@@ -1717,26 +2023,15 @@ async function openUniversalViewer(fileObj) {
       return;
     }
 
-    // 2. PDF Документ (.pdf)
-    if (meta.type === "pdf") {
-      const res = await fetch(url);
-      if (!res.ok) throw new Error("HTTP " + res.status);
-      activePdfArrayBuffer = await res.arrayBuffer();
-      activePdfScale = 1.0;
-      await renderPdfDocument(activePdfArrayBuffer, 1.0);
-      return;
-    }
-
-    // 3. Word Документ (.docx)
+    // 2. Word Документ (.docx)
     if (meta.type === "docx") {
       const fname = (fileObj.title || "").toLowerCase();
       if (fname.endsWith(".doc") && !fname.endsWith(".docx")) {
-        // Старый формат Word 97-2003 (.doc)
         if (viewerLoading) viewerLoading.style.display = "none";
         showFileCard(fileObj, "📝", t("pptFormatNotice").replace(".ppt", ".doc"));
         return;
       }
-      const res = await fetch(url);
+      const res = await fetchFileWithRetry(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
       const ab = await res.arrayBuffer();
       docViewerContainer.style.display = "block";
@@ -1750,10 +2045,10 @@ async function openUniversalViewer(fileObj) {
       return;
     }
 
-    // 4. Таблицы (.xlsx, .xls, .csv)
+    // 3. Таблицы (.xlsx, .xls, .csv)
     if (meta.type === "xlsx") {
       const fname = (fileObj.title || "").toLowerCase();
-      const res = await fetch(url);
+      const res = await fetchFileWithRetry(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
       const ab = await res.arrayBuffer();
       if (viewerLoading) viewerLoading.style.display = "none";
@@ -1761,7 +2056,7 @@ async function openUniversalViewer(fileObj) {
       return;
     }
 
-    // 5. Изображение
+    // 4. Изображение
     if (meta.type === "image") {
       viewerImage.src = url;
       imageViewerContainer.style.display = "flex";
@@ -1769,7 +2064,7 @@ async function openUniversalViewer(fileObj) {
       return;
     }
 
-    // 6. Аудио (.mp3, .wav, .ogg, .m4a)
+    // 5. Аудио (.mp3, .wav, .ogg, .m4a)
     if (meta.type === "audio") {
       audioTrackTitle.textContent = fileObj.title || "Аудиозапись";
       viewerAudio.src = url;
@@ -1779,9 +2074,9 @@ async function openUniversalViewer(fileObj) {
       return;
     }
 
-    // 7. Текст или исходный код
+    // 6. Текст или исходный код
     if (meta.type === "text") {
-      const res = await fetch(url);
+      const res = await fetchFileWithRetry(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
       currentCodeText = await res.text();
       viewerCode.textContent = currentCodeText;
@@ -1791,7 +2086,7 @@ async function openUniversalViewer(fileObj) {
       return;
     }
 
-    // 8. Архивы или прочие форматы
+    // 7. Архивы или прочие форматы
     if (meta.type === "zip") {
       if (viewerLoading) viewerLoading.style.display = "none";
       showFileCard(fileObj, "📦", "Файловый архив");
