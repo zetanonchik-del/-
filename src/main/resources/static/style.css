@@ -222,6 +222,13 @@ body {
   width: 100%;
   background: #000;
   position: relative;
+  overflow: hidden;
+}
+
+.video-container video {
+  width: 100%;
+  display: block;
+  background: #000;
 }
 
 .video-rotate-btn {
@@ -278,7 +285,7 @@ body {
   top: 0;
   bottom: 0;
   width: 42%;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   pointer-events: none;

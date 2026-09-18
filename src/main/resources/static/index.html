@@ -7,7 +7,46 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="lib/pdf.min.js"></script>
   <script src="lib/mammoth.browser.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=39">
+  <link rel="stylesheet" href="style.css?v=20260918_v2">
+  <style>
+    /* Critical layout to prevent overlays from ever leaking into normal document flow */
+    .player-section { width: 100%; background: #000; position: relative; }
+    .video-container { width: 100%; background: #000; position: relative; overflow: hidden; }
+    .video-container video { width: 100%; display: block; background: #000; }
+    .video-seek-overlay {
+      position: absolute !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      width: 42% !important;
+      display: none !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: none !important;
+      z-index: 30 !important;
+      opacity: 0 !important;
+      overflow: hidden !important;
+      user-select: none !important;
+    }
+    .video-seek-overlay.active {
+      display: flex !important;
+      opacity: 1 !important;
+    }
+    .video-seek-overlay.seek-left { left: 0 !important; border-radius: 0 100% 100% 0 !important; }
+    .video-seek-overlay.seek-right { right: 0 !important; border-radius: 100% 0 0 100% !important; }
+    .video-tap-feedback.feedback-center {
+      position: absolute !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) scale(0.7) !important;
+      display: none !important;
+      pointer-events: none !important;
+      z-index: 35 !important;
+    }
+    .video-tap-feedback.feedback-center.show {
+      display: flex !important;
+      opacity: 1 !important;
+    }
+  </style>
 </head>
 <body>
   <!-- Access Denied Screen: Big bold X in black & white, beautiful dark ambient background, zero words -->
@@ -59,7 +98,7 @@
       <div class="video-container" id="videoContainer">
         <video id="videoPlayer" controls playsinline controlsList="nodownload" preload="metadata"></video>
         <!-- Быстрая перемотка YouTube: +5, +10, +15... -->
-        <div class="video-seek-overlay seek-left" id="seekOverlayLeft">
+        <div class="video-seek-overlay seek-left" id="seekOverlayLeft" style="display:none;">
           <div class="seek-ripple"></div>
           <div class="seek-badge">
             <span class="seek-chevron">‹</span>
@@ -67,7 +106,7 @@
           </div>
         </div>
 
-        <div class="video-tap-feedback feedback-center" id="tapFeedbackCenter">
+        <div class="video-tap-feedback feedback-center" id="tapFeedbackCenter" style="display:none;">
           <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
             <polyline points="21 3 21 8 16 8"></polyline>
@@ -76,7 +115,7 @@
           </svg>
         </div>
 
-        <div class="video-seek-overlay seek-right" id="seekOverlayRight">
+        <div class="video-seek-overlay seek-right" id="seekOverlayRight" style="display:none;">
           <div class="seek-ripple"></div>
           <div class="seek-badge">
             <span class="seek-seconds" id="seekSecondsRight">+5</span>
@@ -170,6 +209,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=53"></script>
+  <script src="app.js?v=20260918_v2"></script>
 </body>
 </html>

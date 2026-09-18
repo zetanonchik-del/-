@@ -934,32 +934,51 @@ function triggerCenterFeedback() {
   if (!tapFeedbackCenter) return;
   hideSeekFeedback();
   clearTimeout(centerFeedbackTimer);
+  tapFeedbackCenter.style.display = "flex";
   tapFeedbackCenter.classList.remove("show");
   void tapFeedbackCenter.offsetWidth;
   tapFeedbackCenter.classList.add("show");
   centerFeedbackTimer = setTimeout(() => {
     tapFeedbackCenter.classList.remove("show");
+    setTimeout(() => {
+      if (!tapFeedbackCenter.classList.contains("show")) {
+        tapFeedbackCenter.style.display = "none";
+      }
+    }, 220);
   }, 650);
 }
 
 function hideSeekFeedback() {
-  if (seekOverlayLeft) seekOverlayLeft.classList.remove("active");
-  if (seekOverlayRight) seekOverlayRight.classList.remove("active");
+  if (seekOverlayLeft) {
+    seekOverlayLeft.classList.remove("active");
+    seekOverlayLeft.style.display = "none";
+  }
+  if (seekOverlayRight) {
+    seekOverlayRight.classList.remove("active");
+    seekOverlayRight.style.display = "none";
+  }
   clearTimeout(quickSeekHideTimer);
 }
 
 function showSeekFeedback(side, seconds) {
-  if (tapFeedbackCenter) tapFeedbackCenter.classList.remove("show");
+  if (tapFeedbackCenter) {
+    tapFeedbackCenter.classList.remove("show");
+    tapFeedbackCenter.style.display = "none";
+  }
   const overlay = side === "right" ? seekOverlayRight : seekOverlayLeft;
   const otherOverlay = side === "right" ? seekOverlayLeft : seekOverlayRight;
   const label = side === "right" ? seekSecondsRight : seekSecondsLeft;
 
-  if (otherOverlay) otherOverlay.classList.remove("active");
+  if (otherOverlay) {
+    otherOverlay.classList.remove("active");
+    otherOverlay.style.display = "none";
+  }
   if (!overlay || !label) return;
 
   label.textContent = side === "right" ? `+${seconds}` : `${seconds}`;
 
-  // Restart animation
+  // Explicitly ensure overlay is visible and positioned over video
+  overlay.style.display = "flex";
   overlay.classList.remove("active");
   void overlay.offsetWidth;
   overlay.classList.add("active");
@@ -967,6 +986,11 @@ function showSeekFeedback(side, seconds) {
   clearTimeout(quickSeekHideTimer);
   quickSeekHideTimer = setTimeout(() => {
     overlay.classList.remove("active");
+    setTimeout(() => {
+      if (!overlay.classList.contains("active")) {
+        overlay.style.display = "none";
+      }
+    }, 220);
     quickSeekAccumulator = 0;
     quickSeekSide = null;
   }, 850);
@@ -1031,6 +1055,12 @@ function handleVideoTapGesture(clientX, clientY, isMouseDblClick = false) {
       triggerCenterFeedback();
     } else {
       performQuickSeek(side);
+      // Предотвращаем случайный переход в полноэкранный режим на ПК
+      setTimeout(() => {
+        if (document.fullscreenElement) {
+          document.exitFullscreen().catch(() => {});
+        }
+      }, 30);
     }
     lastTapTime = now;
     lastTapCoordX = clientX;
@@ -1072,10 +1102,19 @@ videoPlayer.addEventListener("touchstart", (e) => {
   }
 }, { passive: true });
 
-// 2. Двойной клик на ПК (Mouse Double Click)
-videoPlayer.addEventListener("dblclick", (e) => {
+// 2. Двойной клик на ПК (Mouse Double Click): отменяем нативный полноэкранный режим браузера
+function onVideoDblClick(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (e.stopImmediatePropagation) e.stopImmediatePropagation();
   handleVideoTapGesture(e.clientX, e.clientY, true);
-});
+  return false;
+}
+
+videoPlayer.addEventListener("dblclick", onVideoDblClick, { capture: true, passive: false });
+if (videoContainer) {
+  videoContainer.addEventListener("dblclick", onVideoDblClick, { capture: true, passive: false });
+}
 
 // Отправка файла в Telegram-чат (Point 3 & Point 8)
 sendActionBtn.onclick = async () => {
