@@ -7,12 +7,25 @@
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="lib/pdf.min.js"></script>
   <script src="lib/mammoth.browser.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=20260918_v2">
+  <link rel="stylesheet" href="style.css?v=20260918_v3">
   <style>
     /* Critical layout to prevent overlays from ever leaking into normal document flow */
-    .player-section { width: 100%; background: #000; position: relative; }
-    .video-container { width: 100%; background: #000; position: relative; overflow: hidden; }
-    .video-container video { width: 100%; display: block; background: #000; }
+    .player-section { width: 100%; background: #000; position: relative; user-select: none; }
+    .video-container { width: 100%; background: #000; position: relative; overflow: hidden; user-select: none; }
+    .video-container video { width: 100%; display: block; background: #000; user-select: none; }
+    .video-gesture-layer {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 54px !important;
+      z-index: 15 !important;
+      background: transparent !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      -webkit-tap-highlight-color: transparent !important;
+    }
     .video-seek-overlay {
       position: absolute !important;
       top: 0 !important;
@@ -97,6 +110,8 @@
     <section class="player-section">
       <div class="video-container" id="videoContainer">
         <video id="videoPlayer" controls playsinline controlsList="nodownload" preload="metadata"></video>
+        <!-- Прозрачный слой для перехвата кликов и двойных кликов перемотки (защита от нативного fullscreen на ПК) -->
+        <div class="video-gesture-layer" id="videoGestureLayer"></div>
         <!-- Быстрая перемотка YouTube: +5, +10, +15... -->
         <div class="video-seek-overlay seek-left" id="seekOverlayLeft" style="display:none;">
           <div class="seek-ripple"></div>
@@ -209,6 +224,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=20260918_v2"></script>
+  <script src="app.js?v=20260918_v3"></script>
 </body>
 </html>

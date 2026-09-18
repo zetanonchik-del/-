@@ -223,12 +223,30 @@ body {
   background: #000;
   position: relative;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .video-container video {
   width: 100%;
   display: block;
   background: #000;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.video-gesture-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 54px;
+  z-index: 15;
+  background: transparent;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .video-rotate-btn {

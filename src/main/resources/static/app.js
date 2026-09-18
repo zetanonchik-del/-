@@ -919,6 +919,7 @@ if (videoContainer) {
 }
 
 // YouTube-style Quick Seek (+5, +10, +15...) & Center Orientation Flip
+const videoGestureLayer = document.getElementById("videoGestureLayer");
 const seekOverlayLeft = document.getElementById("seekOverlayLeft");
 const seekOverlayRight = document.getElementById("seekOverlayRight");
 const seekSecondsLeft = document.getElementById("seekSecondsLeft");
@@ -936,7 +937,6 @@ function triggerCenterFeedback() {
   clearTimeout(centerFeedbackTimer);
   tapFeedbackCenter.style.display = "flex";
   tapFeedbackCenter.classList.remove("show");
-  void tapFeedbackCenter.offsetWidth;
   tapFeedbackCenter.classList.add("show");
   centerFeedbackTimer = setTimeout(() => {
     tapFeedbackCenter.classList.remove("show");
@@ -977,10 +977,7 @@ function showSeekFeedback(side, seconds) {
 
   label.textContent = side === "right" ? `+${seconds}` : `${seconds}`;
 
-  // Explicitly ensure overlay is visible and positioned over video
   overlay.style.display = "flex";
-  overlay.classList.remove("active");
-  void overlay.offsetWidth;
   overlay.classList.add("active");
 
   clearTimeout(quickSeekHideTimer);
@@ -1017,10 +1014,10 @@ function performQuickSeek(side) {
 }
 
 let lastTapTime = 0;
-let lastTapCoordX = 0;
-let lastTapCoordY = 0;
+let clickTimer = null;
+let clickCount = 0;
 
-function handleVideoTapGesture(clientX, clientY, isMouseDblClick = false) {
+function handleGesturePointer(clientX, clientY, isTouch = false) {
   if (!videoPlayer) return;
   const rect = videoPlayer.getBoundingClientRect();
   if (rect.width <= 0 || rect.height <= 0) return;
@@ -1034,52 +1031,50 @@ function handleVideoTapGesture(clientX, clientY, isMouseDblClick = false) {
     relY = (clientY - rect.top) / rect.height;
   }
 
-  // Игнорируем нажатия на нижнюю полосу контролов плеера
-  if (relY > 0.82) return;
-
-  let side = "center";
-  if (relX < 0.38) {
-    side = "left";
-  } else if (relX > 0.62) {
-    side = "right";
+  let side = "right";
+  if (isTouch) {
+    if (relX < 0.38) side = "left";
+    else if (relX > 0.62) side = "right";
+    else side = "center";
+  } else {
+    // На ПК: четкое деление пополам (левая половина - назад, правая - вперед)
+    side = relX < 0.5 ? "left" : "right";
   }
 
   const now = Date.now();
-  const timeSinceLastTap = now - lastTapTime;
-  const dist = Math.hypot(clientX - lastTapCoordX, clientY - lastTapCoordY);
+  const timeDiff = now - lastTapTime;
 
-  if (isMouseDblClick) {
-    // Двойной клик мыши на ПК
-    if (side === "center") {
-      toggleVideoRotation();
-      triggerCenterFeedback();
-    } else {
-      performQuickSeek(side);
-      // Предотвращаем случайный переход в полноэкранный режим на ПК
-      setTimeout(() => {
-        if (document.fullscreenElement) {
-          document.exitFullscreen().catch(() => {});
-        }
-      }, 30);
-    }
+  // Если уже идёт активная серия быстрых перемоток на этой стороне (3-е, 4-е нажатие и т.д.):
+  if (quickSeekSide && quickSeekSide === side && timeDiff < 850) {
+    clearTimeout(clickTimer);
+    clickCount = 0;
     lastTapTime = now;
-    lastTapCoordX = clientX;
-    lastTapCoordY = clientY;
-    return;
-  }
-
-  // Если уже идёт активная серия быстрых перемоток на этой же стороне (3-е, 4-е нажатие и т.д.):
-  if (quickSeekSide && quickSeekSide === side && timeSinceLastTap < 850) {
     performQuickSeek(side);
-    lastTapTime = now;
-    lastTapCoordX = clientX;
-    lastTapCoordY = clientY;
     return;
   }
 
-  // Обнаружение двойного тапа (Double Tap)
-  if (timeSinceLastTap < 330 && dist < 60) {
-    if (side === "center") {
+  clickCount++;
+  if (clickCount === 1) {
+    lastTapTime = now;
+    clickTimer = setTimeout(() => {
+      // Одиночный клик (переключение пауза/воспроизведение на ПК)
+      clickCount = 0;
+      if (!isTouch) {
+        if (videoPlayer.paused) {
+          videoPlayer.play().catch(() => {});
+        } else {
+          videoPlayer.pause();
+        }
+      }
+      showRotateBtn();
+    }, 240);
+  } else if (clickCount >= 2) {
+    // Двойной клик / тап: мгновенная перемотка!
+    clearTimeout(clickTimer);
+    clickCount = 0;
+    lastTapTime = now;
+
+    if (side === "center" && isTouch) {
       toggleVideoRotation();
       triggerCenterFeedback();
       quickSeekAccumulator = 0;
@@ -1088,33 +1083,36 @@ function handleVideoTapGesture(clientX, clientY, isMouseDblClick = false) {
       performQuickSeek(side);
     }
   }
-
-  lastTapTime = now;
-  lastTapCoordX = clientX;
-  lastTapCoordY = clientY;
 }
 
-// 1. Тач-события на смартфонах и планшетах (Touch)
-videoPlayer.addEventListener("touchstart", (e) => {
-  if (e.touches && e.touches.length === 1) {
-    const t = e.touches[0];
-    handleVideoTapGesture(t.clientX, t.clientY, false);
-  }
-}, { passive: true });
+// Привязка к слою жестов поверх видео
+if (videoGestureLayer) {
+  videoGestureLayer.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    handleGesturePointer(e.clientX, e.clientY, false);
+  });
 
-// 2. Двойной клик на ПК (Mouse Double Click): отменяем нативный полноэкранный режим браузера
-function onVideoDblClick(e) {
+  videoGestureLayer.addEventListener("dblclick", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+
+  videoGestureLayer.addEventListener("touchstart", (e) => {
+    if (e.touches && e.touches.length === 1) {
+      const t = e.touches[0];
+      handleGesturePointer(t.clientX, t.clientY, true);
+    }
+  }, { passive: true });
+
+  videoGestureLayer.addEventListener("mousemove", showRotateBtn);
+}
+
+// Защитный перехватчик на самом элементе видео
+videoPlayer.addEventListener("dblclick", (e) => {
   e.preventDefault();
   e.stopPropagation();
-  if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-  handleVideoTapGesture(e.clientX, e.clientY, true);
-  return false;
-}
-
-videoPlayer.addEventListener("dblclick", onVideoDblClick, { capture: true, passive: false });
-if (videoContainer) {
-  videoContainer.addEventListener("dblclick", onVideoDblClick, { capture: true, passive: false });
-}
+}, { capture: true });
 
 // Отправка файла в Telegram-чат (Point 3 & Point 8)
 sendActionBtn.onclick = async () => {
