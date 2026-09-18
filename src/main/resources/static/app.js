@@ -865,95 +865,17 @@ let isRotatedLandscape = false;
 function toggleVideoRotation() {
   isRotatedLandscape = !isRotatedLandscape;
   if (isRotatedLandscape) {
-    let handled = false;
-    const fsTarget = videoContainer || videoPlayer;
-    if (fsTarget.requestFullscreen) {
-      fsTarget.requestFullscreen().then(() => {
-        if (screen.orientation && screen.orientation.lock) {
-          screen.orientation.lock('landscape').catch(() => {});
-        }
-      }).catch(() => {
-        applyCssLandscape();
-      });
-      handled = true;
-    } else if (fsTarget.webkitRequestFullscreen) {
-      fsTarget.webkitRequestFullscreen();
-      handled = true;
-    } else if (videoPlayer.webkitEnterFullscreen) {
-      videoPlayer.webkitEnterFullscreen();
-      handled = true;
-    }
-
-    if (!handled || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-      applyCssLandscape();
+    applyCssLandscape();
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock('landscape').catch(() => {});
     }
   } else {
     exitCssLandscape();
-    if (document.exitFullscreen && (document.fullscreenElement || document.webkitFullscreenElement)) {
-      document.exitFullscreen().catch(() => {});
-    }
     if (screen.orientation && screen.orientation.unlock) {
       screen.orientation.unlock();
     }
   }
 }
-
-// Redirect native requestFullscreen calls on video element to videoContainer
-if (typeof HTMLVideoElement !== "undefined") {
-  const origProtoFs = HTMLVideoElement.prototype.requestFullscreen;
-  if (origProtoFs) {
-    HTMLVideoElement.prototype.requestFullscreen = function(options) {
-      if (this === videoPlayer && videoContainer && videoContainer.requestFullscreen) {
-        return videoContainer.requestFullscreen(options);
-      }
-      return origProtoFs.call(this, options);
-    };
-  }
-
-  const origProtoWebkitFs = HTMLVideoElement.prototype.webkitRequestFullscreen;
-  if (origProtoWebkitFs) {
-    HTMLVideoElement.prototype.webkitRequestFullscreen = function(options) {
-      if (this === videoPlayer && videoContainer && videoContainer.webkitRequestFullscreen) {
-        return videoContainer.webkitRequestFullscreen(options);
-      }
-      return origProtoWebkitFs.call(this, options);
-    };
-  }
-}
-
-if (videoPlayer) {
-  videoPlayer.requestFullscreen = function(options) {
-    if (videoContainer && videoContainer.requestFullscreen) {
-      return videoContainer.requestFullscreen(options);
-    }
-    return Promise.reject(new Error("Fullscreen not supported"));
-  };
-  if (videoPlayer.webkitRequestFullscreen) {
-    videoPlayer.webkitRequestFullscreen = function(options) {
-      if (videoContainer && videoContainer.webkitRequestFullscreen) {
-        return videoContainer.webkitRequestFullscreen(options);
-      }
-    };
-  }
-}
-
-// Keep fullscreen synchronized: if native controls put videoPlayer in fullscreen, switch to videoContainer
-function onFullscreenChangeHandler() {
-  const fsEl = document.fullscreenElement || document.webkitFullscreenElement;
-  if (fsEl === videoPlayer) {
-    if (videoContainer && videoContainer.requestFullscreen) {
-      videoContainer.requestFullscreen().catch(() => {});
-    } else if (videoContainer && videoContainer.webkitRequestFullscreen) {
-      videoContainer.webkitRequestFullscreen();
-    }
-  } else if (!fsEl) {
-    if (isRotatedLandscape) {
-      exitCssLandscape();
-    }
-  }
-}
-document.addEventListener("fullscreenchange", onFullscreenChangeHandler);
-document.addEventListener("webkitfullscreenchange", onFullscreenChangeHandler);
 
 function updateRotateBtnTooltip() {
   if (!rotateVideoBtn) return;
