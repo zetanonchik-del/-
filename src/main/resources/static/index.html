@@ -6,8 +6,9 @@
   <title>Образовательная платформа</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="lib/pdf.min.js"></script>
+  <script src="lib/jszip.min.js"></script>
   <script src="lib/mammoth.browser.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=20260918_v7">
+  <link rel="stylesheet" href="style.css?v=20260918_v8">
   <style>
     /* Critical layout to prevent overlays from ever leaking into normal document flow */
     .player-section { width: 100%; background: #000; position: relative; user-select: none; }
@@ -245,6 +246,13 @@
           <button id="pdfZoomIn" class="viewer-icon-btn" title="Увеличить">+</button>
           <button id="pdfFitWidth" class="viewer-icon-btn" title="По ширине">↔</button>
         </div>
+        <div id="pptxControls" class="pptx-controls" style="display:none;">
+          <button id="pptxPrevSlide" class="viewer-icon-btn" title="Предыдущий слайд">◀</button>
+          <span id="pptxSlideInfo" class="pptx-slide-info">1 / 1</span>
+          <button id="pptxNextSlide" class="viewer-icon-btn" title="Следующий слайд">▶</button>
+          <button id="pptxToggleMode" class="viewer-icon-btn" title="Режим просмотра">📜</button>
+        </div>
+        <button id="codeCopyBtn" class="viewer-icon-btn copy-code-btn" style="display:none;" title="Скопировать код">📋</button>
         <button id="fileViewerCloseBtn" class="file-viewer-close">✕</button>
       </div>
     </div>
@@ -253,10 +261,22 @@
         <div class="spinner"></div>
         <span id="viewerLoadingText">Загрузка документа...</span>
       </div>
+      <!-- PPTX presentation container -->
+      <div id="pptxViewerContainer" class="pptx-viewer-container" style="display:none;"></div>
       <!-- PDF.js container -->
       <div id="pdfViewerContainer" class="pdf-viewer-container" style="display:none;"></div>
       <!-- Word DOCX (mammoth.js) container -->
       <div id="docViewerContainer" class="doc-viewer-container" style="display:none;"></div>
+      <!-- Spreadsheet (XLSX / CSV) container -->
+      <div id="sheetViewerContainer" class="sheet-viewer-container" style="display:none;"></div>
+      <!-- Audio container -->
+      <div id="audioViewerContainer" class="audio-viewer-container" style="display:none;">
+        <div class="audio-player-card">
+          <div class="audio-icon-wrap">🎵</div>
+          <div id="audioTrackTitle" class="audio-title">Track</div>
+          <audio id="viewerAudio" controls class="viewer-audio-element"></audio>
+        </div>
+      </div>
       <!-- Image container -->
       <div id="imageViewerContainer" class="image-viewer-container" style="display:none;">
         <img id="viewerImage" class="viewer-img" alt="Preview">
@@ -265,11 +285,23 @@
       <div id="codeViewerContainer" class="code-viewer-container" style="display:none;">
         <pre><code id="viewerCode"></code></pre>
       </div>
+      <!-- Universal interactive card container (for PPT, archives, unsupported formats) -->
+      <div id="cardViewerContainer" class="card-viewer-container" style="display:none;">
+        <div class="file-card-box">
+          <div id="fileCardIcon" class="file-card-icon">📊</div>
+          <h3 id="fileCardName" class="file-card-name"></h3>
+          <p id="fileCardNotice" class="file-card-notice"></p>
+          <div class="file-card-actions">
+            <button id="cardSendChatBtn" class="action-btn btn-primary">💬 Отправить в чат</button>
+            <button id="cardDownloadBtn" class="action-btn btn-secondary">📥 Скачать файл</button>
+          </div>
+        </div>
+      </div>
       <!-- Fallback iframe -->
       <iframe id="fileViewerFrame" class="file-viewer-frame" style="display:none;"></iframe>
     </div>
   </div>
 
-  <script src="app.js?v=20260918_v7"></script>
+  <script src="app.js?v=20260918_v8"></script>
 </body>
 </html>

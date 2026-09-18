@@ -880,6 +880,348 @@ video {
   background: #fff;
 }
 
+/* PPTX controls in header */
+.pptx-controls {
+  display: flex;
+  align-items: center;
+  background: #1f2029;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 2px 6px;
+  gap: 6px;
+}
+
+.pptx-slide-info {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+  min-width: 54px;
+  text-align: center;
+}
+
+/* Copy code button */
+.copy-code-btn {
+  background: #1f2029 !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px;
+  color: #fff;
+  padding: 4px 8px;
+}
+
+/* PPTX presentation container */
+.pptx-viewer-container {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 16px 12px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-sizing: border-box;
+}
+
+.pptx-slide-card {
+  width: 100%;
+  background: linear-gradient(155deg, #181a24 0%, #101118 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 24px 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 260px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  user-select: text;
+}
+
+.pptx-slide-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 10px;
+  gap: 10px;
+}
+
+.pptx-slide-badge {
+  background: rgba(43, 138, 245, 0.2);
+  color: #58a6ff;
+  border: 1px solid rgba(88, 166, 255, 0.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.pptx-slide-title-preview {
+  font-size: 13px;
+  color: #8b949e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.pptx-slide-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pptx-slide-heading {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 4px 0 10px;
+  line-height: 1.35;
+  border-left: 4px solid var(--accent-blue);
+  padding-left: 10px;
+}
+
+.pptx-paragraph {
+  font-size: 15px;
+  color: #e6edf3;
+  line-height: 1.6;
+  margin: 4px 0;
+}
+
+.pptx-bullet-list {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 6px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pptx-bullet-item {
+  position: relative;
+  padding-left: 20px;
+  font-size: 15px;
+  color: #d1d7e0;
+  line-height: 1.55;
+}
+
+.pptx-bullet-item::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  top: 0;
+  color: var(--accent-blue);
+  font-size: 18px;
+}
+
+.pptx-bullet-item.lvl-1 {
+  padding-left: 36px;
+  color: #aeb5c2;
+}
+
+.pptx-bullet-item.lvl-1::before {
+  content: "◦";
+  left: 20px;
+}
+
+.pptx-bullet-item.lvl-2 {
+  padding-left: 52px;
+  color: #8c93a3;
+}
+
+.pptx-bullet-item.lvl-2::before {
+  content: "▪";
+  left: 36px;
+  font-size: 12px;
+}
+
+.pptx-image-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
+
+.pptx-slide-image {
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.pptx-table-wrapper {
+  overflow-x: auto;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pptx-slide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.pptx-slide-table th {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pptx-slide-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #c9d1d9;
+}
+
+/* Spreadsheet table viewer */
+.sheet-viewer-container {
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.sheet-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #161822;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.sheet-table th {
+  background: #212433;
+  color: #58a6ff;
+  font-weight: 600;
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: sticky;
+  top: 0;
+}
+
+.sheet-table td {
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #c9d1d9;
+  user-select: text;
+}
+
+.sheet-table tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* Audio player card */
+.audio-viewer-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.audio-player-card {
+  width: 100%;
+  max-width: 440px;
+  background: #181a24;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 30px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.audio-icon-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(43, 138, 245, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+.audio-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  word-break: break-all;
+}
+
+.viewer-audio-element {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Universal interactive card container (for PPT, archives, unsupported) */
+.card-viewer-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+}
+
+.file-card-box {
+  width: 100%;
+  max-width: 460px;
+  background: #181a24;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+.file-card-icon {
+  font-size: 54px;
+}
+
+.file-card-name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  word-break: break-all;
+  margin: 0;
+}
+
+.file-card-notice {
+  font-size: 14px;
+  color: #8b949e;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.file-card-actions {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.file-card-actions .action-btn {
+  width: 100%;
+}
+
 /* Скрытая вкладка или контент-блок */
 .tab-item.tab-hidden,
 .content-box.hidden {

@@ -28,9 +28,15 @@ const I18N = {
     attachedFile: (title) => `📎 Прикрепленный файл: ${title}`,
     noHomeworkText: "Письменное задание отсутствует.",
     openPdfBtn: "👁 Открыть PDF",
+    openPptBtn: "👁 Смотреть презентацию",
     openDocBtn: "👁 Открыть документ",
+    openSheetBtn: "👁 Открыть таблицу",
+    readTextBtn: "👁 Читать текст",
+    viewImageBtn: "👁 Просмотр фото",
+    playAudioBtn: "🎵 Слушать аудио",
     watchVideoBtn: "▶️ Смотреть видео",
     downloadZipBtn: "📥 Скачать ZIP",
+    downloadFile: "📥 Скачать файл",
     openFileBtn: "👁 Открыть файл",
     sendToChatBtn: "💬 Отправить в чат",
     sendingBtn: "Отправка в чат...",
@@ -45,6 +51,12 @@ const I18N = {
     close: "Закрыть",
     docLoading: "Загрузка документа...",
     docLoadError: "Не удалось открыть документ.",
+    slideCount: (i, n) => `Слайд ${i}/${n}`,
+    copyCode: "📋 Скопировать",
+    copied: "✅ Скопировано!",
+    allSlides: "📜 Все слайды",
+    singleSlide: "📑 По слайдам",
+    pptFormatNotice: "Презентация Microsoft PowerPoint (.ppt). Вы можете отправить её в диалог с ботом или скачать:",
   },
   uz: {
     moduleLabel: "Modul:",
@@ -64,9 +76,15 @@ const I18N = {
     attachedFile: (title) => `📎 Ilova qilingan fayl: ${title}`,
     noHomeworkText: "Yozma topshiriq mavjud emas.",
     openPdfBtn: "👁 PDF ochish",
+    openPptBtn: "👁 Taqdimotni ochish",
     openDocBtn: "👁 Hujjatni ochish",
+    openSheetBtn: "👁 Jadvalni ochish",
+    readTextBtn: "👁 Matnni o'qish",
+    viewImageBtn: "👁 Rasmni ko'rish",
+    playAudioBtn: "🎵 Audioni tinglash",
     watchVideoBtn: "▶️ Videoni ko'rish",
     downloadZipBtn: "📥 ZIP yuklab olish",
+    downloadFile: "📥 Faylni yuklab olish",
     openFileBtn: "👁 Faylni ochish",
     sendToChatBtn: "💬 Chatga yuborish",
     sendingBtn: "Yuborilmoqda...",
@@ -81,6 +99,12 @@ const I18N = {
     close: "Yopish",
     docLoading: "Hujjat yuklanmoqda...",
     docLoadError: "Hujjatni ochib bo'lmadi.",
+    slideCount: (i, n) => `Slayd ${i}/${n}`,
+    copyCode: "📋 Nusxalash",
+    copied: "✅ Nusxalandi!",
+    allSlides: "📜 Barcha slaydlar",
+    singleSlide: "📑 Slaydma-slayd",
+    pptFormatNotice: "Microsoft PowerPoint (.ppt) taqdimoti. Uni bot chatiga yuborishingiz yoki yuklab olishingiz mumkin:",
   },
   en: {
     moduleLabel: "Module:",
@@ -100,9 +124,15 @@ const I18N = {
     attachedFile: (title) => `📎 Attached file: ${title}`,
     noHomeworkText: "No written assignment.",
     openPdfBtn: "👁 Open PDF",
+    openPptBtn: "👁 View presentation",
     openDocBtn: "👁 Open document",
+    openSheetBtn: "👁 Open spreadsheet",
+    readTextBtn: "👁 Read text",
+    viewImageBtn: "👁 View image",
+    playAudioBtn: "🎵 Play audio",
     watchVideoBtn: "▶️ Watch video",
     downloadZipBtn: "📥 Download ZIP",
+    downloadFile: "📥 Download file",
     openFileBtn: "👁 Open file",
     sendToChatBtn: "💬 Send to chat",
     sendingBtn: "Sending...",
@@ -117,6 +147,12 @@ const I18N = {
     close: "Close",
     docLoading: "Loading document...",
     docLoadError: "Failed to open document.",
+    slideCount: (i, n) => `Slide ${i}/${n}`,
+    copyCode: "📋 Copy",
+    copied: "✅ Copied!",
+    allSlides: "📜 All slides",
+    singleSlide: "📑 By slide",
+    pptFormatNotice: "Microsoft PowerPoint (.ppt) presentation. You can send it to the bot chat or download it:",
   },
 };
 
@@ -487,6 +523,53 @@ tabItems.forEach(item => {
   };
 });
 
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getFileMeta(fileName) {
+  const fname = (fileName || "").toLowerCase().trim();
+  if (fname.endsWith(".pptx") || fname.endsWith(".ppt") || fname.endsWith(".odp") || fname.endsWith(".pps") || fname.endsWith(".ppsx")) {
+    return { type: "pptx", icon: "📊", btnKey: "openPptBtn" };
+  }
+  if (fname.endsWith(".pdf")) {
+    return { type: "pdf", icon: "📄", btnKey: "openPdfBtn" };
+  }
+  if (fname.endsWith(".docx") || fname.endsWith(".doc") || fname.endsWith(".odt") || fname.endsWith(".rtf")) {
+    return { type: "docx", icon: "📝", btnKey: "openDocBtn" };
+  }
+  if (fname.endsWith(".xlsx") || fname.endsWith(".xls") || fname.endsWith(".csv") || fname.endsWith(".ods")) {
+    return { type: "xlsx", icon: "📈", btnKey: "openSheetBtn" };
+  }
+  if (fname.endsWith(".txt") || fname.endsWith(".log") || fname.endsWith(".md") || fname.endsWith(".json") ||
+      fname.endsWith(".xml") || fname.endsWith(".java") || fname.endsWith(".py") || fname.endsWith(".js") ||
+      fname.endsWith(".ts") || fname.endsWith(".html") || fname.endsWith(".css") || fname.endsWith(".sql") ||
+      fname.endsWith(".c") || fname.endsWith(".cpp") || fname.endsWith(".h") || fname.endsWith(".cs") ||
+      fname.endsWith(".sh") || fname.endsWith(".bat") || fname.endsWith(".yml") || fname.endsWith(".yaml")) {
+    return { type: "text", icon: "📋", btnKey: "readTextBtn" };
+  }
+  if (fname.endsWith(".png") || fname.endsWith(".jpg") || fname.endsWith(".jpeg") || fname.endsWith(".webp") ||
+      fname.endsWith(".gif") || fname.endsWith(".svg") || fname.endsWith(".bmp")) {
+    return { type: "image", icon: "🖼️", btnKey: "viewImageBtn" };
+  }
+  if (fname.endsWith(".mp4") || fname.endsWith(".mov") || fname.endsWith(".webm") || fname.endsWith(".mkv") || fname.endsWith(".avi")) {
+    return { type: "video", icon: "🎬", btnKey: "watchVideoBtn" };
+  }
+  if (fname.endsWith(".mp3") || fname.endsWith(".wav") || fname.endsWith(".ogg") || fname.endsWith(".m4a") || fname.endsWith(".flac")) {
+    return { type: "audio", icon: "🎵", btnKey: "playAudioBtn" };
+  }
+  if (fname.endsWith(".zip") || fname.endsWith(".rar") || fname.endsWith(".7z") || fname.endsWith(".tar.gz") || fname.endsWith(".gz")) {
+    return { type: "zip", icon: "📦", btnKey: "downloadZipBtn" };
+  }
+  return { type: "generic", icon: "📎", btnKey: "openFileBtn" };
+}
+
 function updateTabContent() {
   if (!currentSelectedLesson) return;
   const l = currentSelectedLesson;
@@ -498,22 +581,13 @@ function updateTabContent() {
 
     if (hwList.length > 0) {
       const curHw = hwList[currentHwFileIdx] || hwList[0];
-      fileTitleHeader.textContent = t("attachedFile", curHw.title);
+      const meta = getFileMeta(curHw.title);
+      fileTitleHeader.textContent = `${meta.icon} ${curHw.title}`;
       subPartTitle.textContent = t("fileCount", currentHwFileIdx + 1, hwList.length);
       prevSubPartBtn.disabled = (currentHwFileIdx === 0);
       nextSubPartBtn.disabled = (currentHwFileIdx === hwList.length - 1);
       openDirectBtn.style.display = "block";
-
-      const fname = (curHw.title || "").toLowerCase();
-      if (fname.endsWith(".pdf")) {
-        openDirectBtn.textContent = t("openPdfBtn");
-      } else if (fname.endsWith(".docx") || fname.endsWith(".doc")) {
-        openDirectBtn.textContent = t("openDocBtn");
-      } else if (curHw.isVideo || fname.endsWith(".mp4") || fname.endsWith(".mov")) {
-        openDirectBtn.textContent = t("watchVideoBtn");
-      } else {
-        openDirectBtn.textContent = t("openFileBtn");
-      }
+      openDirectBtn.textContent = t(meta.btnKey);
 
       sendActionBtn.style.display = "block";
       sendActionBtn.textContent = t("sendToChatBtn");
@@ -535,18 +609,18 @@ function updateTabContent() {
     const pdfs = l.pdfs || [];
     subPartsBar.style.display = (pdfs.length > 1) ? "flex" : "none";
 
-    // Point 4: Убираем лишнюю информацию, оставляем только кнопки и название файла
     mainContentBox.classList.add("hidden");
     mainContentBox.textContent = "";
 
     if (pdfs.length > 0) {
       const curPdf = pdfs[currentPdfIdx] || pdfs[0];
-      fileTitleHeader.textContent = `📄 ${curPdf.title}`;
+      const meta = getFileMeta(curPdf.title);
+      fileTitleHeader.textContent = `${meta.icon} ${curPdf.title}`;
       subPartTitle.textContent = t("fileCount", currentPdfIdx + 1, pdfs.length);
       prevSubPartBtn.disabled = (currentPdfIdx === 0);
       nextSubPartBtn.disabled = (currentPdfIdx === pdfs.length - 1);
       openDirectBtn.style.display = "block";
-      openDirectBtn.textContent = t("openPdfBtn");
+      openDirectBtn.textContent = t(meta.btnKey);
       sendActionBtn.style.display = "block";
       sendActionBtn.textContent = t("sendToChatBtn");
     }
@@ -555,18 +629,18 @@ function updateTabContent() {
     const zips = l.zips || [];
     subPartsBar.style.display = (zips.length > 1) ? "flex" : "none";
 
-    // Убираем лишнюю информацию
     mainContentBox.classList.add("hidden");
     mainContentBox.textContent = "";
 
     if (zips.length > 0) {
       const curZip = zips[currentZipIdx] || zips[0];
-      fileTitleHeader.textContent = `📦 ${curZip.title}`;
+      const meta = getFileMeta(curZip.title);
+      fileTitleHeader.textContent = `${meta.icon} ${curZip.title}`;
       subPartTitle.textContent = t("fileCount", currentZipIdx + 1, zips.length);
       prevSubPartBtn.disabled = (currentZipIdx === 0);
       nextSubPartBtn.disabled = (currentZipIdx === zips.length - 1);
       openDirectBtn.style.display = "block";
-      openDirectBtn.textContent = t("downloadZipBtn");
+      openDirectBtn.textContent = t(meta.btnKey);
       sendActionBtn.style.display = "block";
       sendActionBtn.textContent = t("sendToChatBtn");
     }
@@ -593,6 +667,9 @@ nextSubPartBtn.onclick = () => {
 // ---------------------------------------------------------------------------
 // Просмотр файлов ПРЯМО ВНУТРИ Mini App (PDF, Word DOCX, Картинки, Код)
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Просмотр файлов ПРЯМО ВНУТРИ Mini App (PPTX, PDF, Word DOCX, Excel, Картинки, Код, Аудио)
+// ---------------------------------------------------------------------------
 if (window.pdfjsLib) {
   pdfjsLib.GlobalWorkerOptions.workerSrc = "lib/pdf.worker.min.js";
 }
@@ -602,21 +679,53 @@ let activePdfArrayBuffer = null;
 let activePdfScale = 1.0;
 let isPdfRendering = false;
 
+let activePptxSlides = [];
+let currentPptxSlideIdx = 0;
+let isPptxAllMode = false;
+let pptxImageBlobUrls = [];
+
+let currentViewerFileObj = null;
+let currentCodeText = "";
+
 // DOM элементы просмотрщика
 const fileViewerBody = document.getElementById("fileViewerBody");
 const viewerLoading = document.getElementById("viewerLoading");
 const viewerLoadingText = document.getElementById("viewerLoadingText");
+
 const pdfViewerContainer = document.getElementById("pdfViewerContainer");
-const docViewerContainer = document.getElementById("docViewerContainer");
-const imageViewerContainer = document.getElementById("imageViewerContainer");
-const viewerImage = document.getElementById("viewerImage");
-const codeViewerContainer = document.getElementById("codeViewerContainer");
-const viewerCode = document.getElementById("viewerCode");
 const pdfControls = document.getElementById("pdfControls");
 const pdfPageInfo = document.getElementById("pdfPageInfo");
 const pdfZoomIn = document.getElementById("pdfZoomIn");
 const pdfZoomOut = document.getElementById("pdfZoomOut");
 const pdfFitWidth = document.getElementById("pdfFitWidth");
+
+const pptxViewerContainer = document.getElementById("pptxViewerContainer");
+const pptxControls = document.getElementById("pptxControls");
+const pptxSlideInfo = document.getElementById("pptxSlideInfo");
+const pptxPrevSlide = document.getElementById("pptxPrevSlide");
+const pptxNextSlide = document.getElementById("pptxNextSlide");
+const pptxToggleMode = document.getElementById("pptxToggleMode");
+
+const docViewerContainer = document.getElementById("docViewerContainer");
+const sheetViewerContainer = document.getElementById("sheetViewerContainer");
+
+const audioViewerContainer = document.getElementById("audioViewerContainer");
+const viewerAudio = document.getElementById("viewerAudio");
+const audioTrackTitle = document.getElementById("audioTrackTitle");
+
+const imageViewerContainer = document.getElementById("imageViewerContainer");
+const viewerImage = document.getElementById("viewerImage");
+
+const codeViewerContainer = document.getElementById("codeViewerContainer");
+const viewerCode = document.getElementById("viewerCode");
+const codeCopyBtn = document.getElementById("codeCopyBtn");
+
+const cardViewerContainer = document.getElementById("cardViewerContainer");
+const fileCardIcon = document.getElementById("fileCardIcon");
+const fileCardName = document.getElementById("fileCardName");
+const fileCardNotice = document.getElementById("fileCardNotice");
+const cardSendChatBtn = document.getElementById("cardSendChatBtn");
+const cardDownloadBtn = document.getElementById("cardDownloadBtn");
 
 function resetViewerContainers() {
   if (viewerLoading) viewerLoading.style.display = "none";
@@ -624,9 +733,24 @@ function resetViewerContainers() {
     pdfViewerContainer.style.display = "none";
     pdfViewerContainer.innerHTML = "";
   }
+  if (pptxViewerContainer) {
+    pptxViewerContainer.style.display = "none";
+    pptxViewerContainer.innerHTML = "";
+  }
   if (docViewerContainer) {
     docViewerContainer.style.display = "none";
     docViewerContainer.innerHTML = "";
+  }
+  if (sheetViewerContainer) {
+    sheetViewerContainer.style.display = "none";
+    sheetViewerContainer.innerHTML = "";
+  }
+  if (audioViewerContainer) {
+    audioViewerContainer.style.display = "none";
+  }
+  if (viewerAudio) {
+    try { viewerAudio.pause(); } catch(e){}
+    viewerAudio.removeAttribute("src");
   }
   if (imageViewerContainer) {
     imageViewerContainer.style.display = "none";
@@ -636,13 +760,32 @@ function resetViewerContainers() {
     codeViewerContainer.style.display = "none";
   }
   if (viewerCode) viewerCode.textContent = "";
+  if (codeCopyBtn) codeCopyBtn.style.display = "none";
+  if (cardViewerContainer) {
+    cardViewerContainer.style.display = "none";
+  }
   if (fileViewerFrame) {
     fileViewerFrame.style.display = "none";
     fileViewerFrame.src = "about:blank";
   }
   if (pdfControls) pdfControls.style.display = "none";
+  if (pptxControls) pptxControls.style.display = "none";
+
   activePdfDoc = null;
   activePdfArrayBuffer = null;
+  activePptxSlides = [];
+  currentPptxSlideIdx = 0;
+  isPptxAllMode = false;
+  currentCodeText = "";
+  currentViewerFileObj = null;
+
+  // Revoke previous slide image blob URLs to save memory
+  if (pptxImageBlobUrls && pptxImageBlobUrls.length > 0) {
+    pptxImageBlobUrls.forEach(url => {
+      try { URL.revokeObjectURL(url); } catch(e){}
+    });
+    pptxImageBlobUrls = [];
+  }
 }
 
 function closeFileViewer() {
@@ -650,8 +793,13 @@ function closeFileViewer() {
   resetViewerContainers();
 }
 
-fileViewerCloseBtn.onclick = closeFileViewer;
+if (fileViewerCloseBtn) {
+  fileViewerCloseBtn.onclick = closeFileViewer;
+}
 
+// ---------------------------------------------------------------------------
+// 1. PDF Просмотрщик (PDF.js)
+// ---------------------------------------------------------------------------
 async function renderPdfDocument(arrayBuffer, zoomFactor = 1.0) {
   if (isPdfRendering) return;
   isPdfRendering = true;
@@ -667,7 +815,6 @@ async function renderPdfDocument(arrayBuffer, zoomFactor = 1.0) {
     const numPages = activePdfDoc.numPages;
     pdfPageInfo.textContent = `1 / ${numPages}`;
 
-    // Point 1 & Point 2: Динамический масштаб по ширине экрана/окна (100% width)
     const containerWidth = Math.max(fileViewerBody.clientWidth || window.innerWidth, 300);
 
     for (let i = 1; i <= numPages; i++) {
@@ -688,7 +835,6 @@ async function renderPdfDocument(arrayBuffer, zoomFactor = 1.0) {
       await page.render({ canvasContext: ctx, viewport: viewport }).promise;
     }
 
-    // Обновление номера текущей страницы при скролле
     fileViewerBody.onscroll = () => {
       const canvases = pdfViewerContainer.querySelectorAll(".pdf-page-canvas");
       const currentScroll = fileViewerBody.scrollTop + 120;
@@ -703,36 +849,37 @@ async function renderPdfDocument(arrayBuffer, zoomFactor = 1.0) {
 
   } catch (err) {
     console.error("PDF.js render error:", err);
-    // Резервный показ
-    fileViewerFrame.src = `${API_BASE}/file/view/${fileViewerModal.dataset.fileId}`;
-    fileViewerFrame.style.display = "block";
-    pdfControls.style.display = "none";
+    showFileCard(currentViewerFileObj, "📄", t("docLoadError"));
   } finally {
     isPdfRendering = false;
     if (viewerLoading) viewerLoading.style.display = "none";
   }
 }
 
-// Управление масштабом PDF
-pdfZoomIn.onclick = () => {
-  if (!activePdfArrayBuffer) return;
-  activePdfScale = Math.min(activePdfScale * 1.25, 3.0);
-  renderPdfDocument(activePdfArrayBuffer, activePdfScale);
-};
+if (pdfZoomIn) {
+  pdfZoomIn.onclick = () => {
+    if (!activePdfArrayBuffer) return;
+    activePdfScale = Math.min(activePdfScale * 1.25, 3.0);
+    renderPdfDocument(activePdfArrayBuffer, activePdfScale);
+  };
+}
 
-pdfZoomOut.onclick = () => {
-  if (!activePdfArrayBuffer) return;
-  activePdfScale = Math.max(activePdfScale * 0.8, 0.5);
-  renderPdfDocument(activePdfArrayBuffer, activePdfScale);
-};
+if (pdfZoomOut) {
+  pdfZoomOut.onclick = () => {
+    if (!activePdfArrayBuffer) return;
+    activePdfScale = Math.max(activePdfScale * 0.8, 0.5);
+    renderPdfDocument(activePdfArrayBuffer, activePdfScale);
+  };
+}
 
-pdfFitWidth.onclick = () => {
-  if (!activePdfArrayBuffer) return;
-  activePdfScale = 1.0;
-  renderPdfDocument(activePdfArrayBuffer, 1.0);
-};
+if (pdfFitWidth) {
+  pdfFitWidth.onclick = () => {
+    if (!activePdfArrayBuffer) return;
+    activePdfScale = 1.0;
+    renderPdfDocument(activePdfArrayBuffer, 1.0);
+  };
+}
 
-// Point 1: При растягивании окна браузера на ПК — автоматическая подгонка по ширине!
 let resizePdfTimeout = null;
 window.addEventListener("resize", () => {
   if (fileViewerModal.style.display === "flex" && activePdfArrayBuffer) {
@@ -743,30 +890,579 @@ window.addEventListener("resize", () => {
   }
 });
 
-// Открытие универсального просмотрщика
+// ---------------------------------------------------------------------------
+// 2. PowerPoint Презентации (.pptx) - Парсинг и интерактивный просмотр
+// ---------------------------------------------------------------------------
+async function parsePptxSlides(arrayBuffer) {
+  if (!window.JSZip) {
+    throw new Error("JSZip is not available");
+  }
+  const zip = await JSZip.loadAsync(arrayBuffer);
+
+  // 1. Поиск порядка слайдов в presentation.xml
+  let slidePaths = [];
+  try {
+    const presFile = zip.file("ppt/presentation.xml");
+    const relsFile = zip.file("ppt/_rels/presentation.xml.rels");
+    if (presFile && relsFile) {
+      const presXml = await presFile.async("string");
+      const relsXml = await relsFile.async("string");
+      const parser = new DOMParser();
+      const presDoc = parser.parseFromString(presXml, "application/xml");
+      const relsDoc = parser.parseFromString(relsXml, "application/xml");
+
+      const relMap = {};
+      const relNodes = Array.from(relsDoc.querySelectorAll("*")).filter(n => n.localName === "Relationship");
+      relNodes.forEach(r => {
+        const id = r.getAttribute("Id");
+        const target = r.getAttribute("Target");
+        if (id && target) relMap[id] = target.replace(/^\/?/, "");
+      });
+
+      const sldIds = Array.from(presDoc.querySelectorAll("*")).filter(n => n.localName === "sldId");
+      sldIds.forEach(s => {
+        const rId = s.getAttribute("r:id") || s.getAttribute("id");
+        if (rId && relMap[rId]) {
+          let tPath = relMap[rId];
+          if (!tPath.startsWith("ppt/")) tPath = "ppt/" + tPath;
+          slidePaths.push(tPath);
+        }
+      });
+    }
+  } catch (e) {
+    console.warn("Could not determine slide order from presentation.xml:", e);
+  }
+
+  // Fallback: сбор всех файлов слайдов ppt/slides/slide*.xml
+  if (slidePaths.length === 0) {
+    const allFiles = Object.keys(zip.files);
+    slidePaths = allFiles.filter(name => /^ppt\/slides\/slide\d+\.xml$/i.test(name));
+    slidePaths.sort((a, b) => {
+      const numA = parseInt(a.match(/\d+/)?.[0] || "0", 10);
+      const numB = parseInt(b.match(/\d+/)?.[0] || "0", 10);
+      return numA - numB;
+    });
+  }
+
+  if (slidePaths.length === 0) {
+    throw new Error("No slides found in PPTX");
+  }
+
+  const slides = [];
+  const parser = new DOMParser();
+
+  for (let idx = 0; idx < slidePaths.length; idx++) {
+    const slidePath = slidePaths[idx];
+    const slideFile = zip.file(slidePath);
+    if (!slideFile) continue;
+    const slideXmlStr = await slideFile.async("string");
+
+    // Загрузка картинок слайда через slideX.xml.rels
+    const slideDir = slidePath.substring(0, slidePath.lastIndexOf("/"));
+    const slideFileName = slidePath.substring(slidePath.lastIndexOf("/") + 1);
+    const relsPath = `${slideDir}/_rels/${slideFileName}.rels`;
+    const relsFile = zip.file(relsPath);
+    const imageMap = {};
+
+    if (relsFile) {
+      try {
+        const relsStr = await relsFile.async("string");
+        const relsDoc = parser.parseFromString(relsStr, "application/xml");
+        const relNodes = Array.from(relsDoc.querySelectorAll("*")).filter(n => n.localName === "Relationship");
+        for (const r of relNodes) {
+          const type = r.getAttribute("Type") || "";
+          const target = r.getAttribute("Target") || "";
+          const id = r.getAttribute("Id") || "";
+          if (type.includes("image") && id && target) {
+            let targetPath = target;
+            if (targetPath.startsWith("../")) {
+              targetPath = "ppt/" + targetPath.replace("../", "");
+            } else if (!targetPath.startsWith("ppt/")) {
+              targetPath = "ppt/" + targetPath;
+            }
+            const imgFile = zip.file(targetPath);
+            if (imgFile) {
+              const blob = await imgFile.async("blob");
+              const blobUrl = URL.createObjectURL(blob);
+              pptxImageBlobUrls.push(blobUrl);
+              imageMap[id] = blobUrl;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Error loading slide images:", err);
+      }
+    }
+
+    const slideDoc = parser.parseFromString(slideXmlStr, "application/xml");
+    const slideData = {
+      index: idx + 1,
+      title: "",
+      items: []
+    };
+
+    const allShapes = Array.from(slideDoc.querySelectorAll("*")).filter(n =>
+      n.localName === "sp" || n.localName === "pic" || n.localName === "graphicFrame"
+    );
+
+    for (const shape of allShapes) {
+      // 1. Изображение
+      if (shape.localName === "pic") {
+        const blip = Array.from(shape.querySelectorAll("*")).find(n => n.localName === "blip");
+        const embedId = blip?.getAttribute("r:embed") || blip?.getAttribute("embed");
+        if (embedId && imageMap[embedId]) {
+          slideData.items.push({
+            type: "image",
+            src: imageMap[embedId]
+          });
+        }
+        continue;
+      }
+
+      // 2. Таблица
+      const tbl = Array.from(shape.querySelectorAll("*")).find(n => n.localName === "tbl");
+      if (tbl) {
+        const rows = Array.from(tbl.querySelectorAll("*")).filter(n => n.localName === "tr");
+        const tableRows = [];
+        for (const row of rows) {
+          const cells = Array.from(row.querySelectorAll("*")).filter(n => n.localName === "tc");
+          const rowCells = [];
+          for (const cell of cells) {
+            const texts = Array.from(cell.querySelectorAll("*"))
+              .filter(n => n.localName === "t")
+              .map(n => n.textContent)
+              .join(" ");
+            rowCells.push(texts.trim());
+          }
+          if (rowCells.length > 0) tableRows.push(rowCells);
+        }
+        if (tableRows.length > 0) {
+          slideData.items.push({
+            type: "table",
+            rows: tableRows
+          });
+        }
+        continue;
+      }
+
+      // 3. Блок с текстом
+      const isTitleShape = !!Array.from(shape.querySelectorAll("*")).find(n => {
+        if (n.localName !== "ph") return false;
+        const type = n.getAttribute("type");
+        return type === "title" || type === "ctrTitle";
+      });
+
+      const paragraphs = Array.from(shape.querySelectorAll("*")).filter(n => n.localName === "p");
+      for (const p of paragraphs) {
+        const runs = Array.from(p.querySelectorAll("*")).filter(n => n.localName === "r");
+        let pText = "";
+        let isBold = false;
+
+        runs.forEach(r => {
+          const rPr = Array.from(r.querySelectorAll("*")).find(n => n.localName === "rPr");
+          if (rPr && rPr.getAttribute("b") === "1") isBold = true;
+          const t = Array.from(r.querySelectorAll("*")).find(n => n.localName === "t");
+          if (t && t.textContent) {
+            pText += t.textContent;
+          }
+        });
+
+        const cleanText = pText.trim();
+        if (!cleanText) continue;
+
+        if (isTitleShape && !slideData.title) {
+          slideData.title = cleanText;
+          slideData.items.push({ type: "title", text: cleanText });
+        } else if (!slideData.title && cleanText.length < 90 && slideData.items.length === 0) {
+          slideData.title = cleanText;
+          slideData.items.push({ type: "title", text: cleanText });
+        } else {
+          const pPr = Array.from(p.querySelectorAll("*")).find(n => n.localName === "pPr");
+          const lvl = parseInt(pPr?.getAttribute("lvl") || "0", 10);
+          const hasBullet = !!Array.from(p.querySelectorAll("*")).find(n => n.localName === "buChar" || n.localName === "buAutoNum") || lvl > 0;
+
+          slideData.items.push({
+            type: hasBullet ? "bullet" : "p",
+            lvl: lvl,
+            bold: isBold,
+            text: cleanText
+          });
+        }
+      }
+    }
+
+    // Дополнительные изображения внутри слайда
+    const extraBlips = Array.from(slideDoc.querySelectorAll("*")).filter(n => n.localName === "blip");
+    extraBlips.forEach(b => {
+      const emb = b.getAttribute("r:embed") || b.getAttribute("embed");
+      if (emb && imageMap[emb]) {
+        if (!slideData.items.find(it => it.type === "image" && it.src === imageMap[emb])) {
+          slideData.items.push({ type: "image", src: imageMap[emb] });
+        }
+      }
+    });
+
+    slides.push(slideData);
+  }
+
+  return slides;
+}
+
+function buildSlideCardHtml(slide, totalSlides) {
+  let html = `
+    <div class="pptx-slide-card" data-slide-num="${slide.index}">
+      <div class="pptx-slide-header-bar">
+        <span class="pptx-slide-badge">${t("slideCount", slide.index, totalSlides)}</span>
+        ${slide.title ? `<span class="pptx-slide-title-preview">${escapeHtml(slide.title)}</span>` : ""}
+      </div>
+      <div class="pptx-slide-body">
+  `;
+
+  let inBulletList = false;
+
+  slide.items.forEach(item => {
+    if (item.type === "bullet") {
+      if (!inBulletList) {
+        html += `<ul class="pptx-bullet-list">`;
+        inBulletList = true;
+      }
+      html += `<li class="pptx-bullet-item lvl-${item.lvl}">${item.bold ? `<strong>${escapeHtml(item.text)}</strong>` : escapeHtml(item.text)}</li>`;
+    } else {
+      if (inBulletList) {
+        html += `</ul>`;
+        inBulletList = false;
+      }
+
+      if (item.type === "title") {
+        html += `<h2 class="pptx-slide-heading">${escapeHtml(item.text)}</h2>`;
+      } else if (item.type === "p") {
+        html += `<p class="pptx-paragraph">${item.bold ? `<strong>${escapeHtml(item.text)}</strong>` : escapeHtml(item.text)}</p>`;
+      } else if (item.type === "image") {
+        html += `<div class="pptx-image-wrapper"><img src="${item.src}" class="pptx-slide-image" alt="Slide image"></div>`;
+      } else if (item.type === "table") {
+        html += `<div class="pptx-table-wrapper"><table class="pptx-slide-table">`;
+        item.rows.forEach((r, ri) => {
+          html += `<tr>`;
+          r.forEach(c => {
+            const tag = ri === 0 ? "th" : "td";
+            html += `<${tag}>${escapeHtml(c)}</${tag}>`;
+          });
+          html += `</tr>`;
+        });
+        html += `</table></div>`;
+      }
+    }
+  });
+
+  if (inBulletList) {
+    html += `</ul>`;
+  }
+
+  html += `</div></div>`;
+  return html;
+}
+
+function updatePptxView() {
+  if (!pptxViewerContainer || activePptxSlides.length === 0) return;
+  const total = activePptxSlides.length;
+
+  if (isPptxAllMode) {
+    // Режим "Все слайды"
+    pptxViewerContainer.innerHTML = activePptxSlides.map(s => buildSlideCardHtml(s, total)).join("");
+    pptxSlideInfo.textContent = `${total} / ${total}`;
+    pptxPrevSlide.disabled = true;
+    pptxNextSlide.disabled = true;
+    pptxToggleMode.textContent = "📑";
+    pptxToggleMode.title = t("singleSlide");
+  } else {
+    // Режим "По слайдам"
+    const curSlide = activePptxSlides[currentPptxSlideIdx] || activePptxSlides[0];
+    pptxViewerContainer.innerHTML = buildSlideCardHtml(curSlide, total);
+    pptxSlideInfo.textContent = `${currentPptxSlideIdx + 1} / ${total}`;
+    pptxPrevSlide.disabled = (currentPptxSlideIdx === 0);
+    pptxNextSlide.disabled = (currentPptxSlideIdx === total - 1);
+    pptxToggleMode.textContent = "📜";
+    pptxToggleMode.title = t("allSlides");
+    fileViewerBody.scrollTop = 0;
+  }
+}
+
+if (pptxPrevSlide) {
+  pptxPrevSlide.onclick = () => {
+    if (!isPptxAllMode && currentPptxSlideIdx > 0) {
+      currentPptxSlideIdx--;
+      updatePptxView();
+    }
+  };
+}
+
+if (pptxNextSlide) {
+  pptxNextSlide.onclick = () => {
+    if (!isPptxAllMode && currentPptxSlideIdx < activePptxSlides.length - 1) {
+      currentPptxSlideIdx++;
+      updatePptxView();
+    }
+  };
+}
+
+if (pptxToggleMode) {
+  pptxToggleMode.onclick = () => {
+    isPptxAllMode = !isPptxAllMode;
+    updatePptxView();
+  };
+}
+
+// Навигация клавишами влево/вправо для слайдов
+window.addEventListener("keydown", (e) => {
+  if (fileViewerModal.style.display !== "flex") return;
+  if (activePptxSlides.length > 0 && !isPptxAllMode) {
+    if (e.key === "ArrowLeft" && currentPptxSlideIdx > 0) {
+      currentPptxSlideIdx--;
+      updatePptxView();
+    } else if (e.key === "ArrowRight" && currentPptxSlideIdx < activePptxSlides.length - 1) {
+      currentPptxSlideIdx++;
+      updatePptxView();
+    }
+  }
+});
+
+// Сенсорный свайп слайдов на телефонах
+let touchStartX = 0;
+if (pptxViewerContainer) {
+  pptxViewerContainer.addEventListener("touchstart", (e) => {
+    if (e.touches && e.touches[0]) {
+      touchStartX = e.touches[0].clientX;
+    }
+  }, { passive: true });
+
+  pptxViewerContainer.addEventListener("touchend", (e) => {
+    if (!e.changedTouches || !e.changedTouches[0] || isPptxAllMode) return;
+    const diff = e.changedTouches[0].clientX - touchStartX;
+    if (diff < -50 && currentPptxSlideIdx < activePptxSlides.length - 1) {
+      currentPptxSlideIdx++;
+      updatePptxView();
+    } else if (diff > 50 && currentPptxSlideIdx > 0) {
+      currentPptxSlideIdx--;
+      updatePptxView();
+    }
+  }, { passive: true });
+}
+
+// ---------------------------------------------------------------------------
+// 3. Таблицы (Excel .xlsx / .csv)
+// ---------------------------------------------------------------------------
+async function renderSpreadsheet(arrayBuffer, isCsv = false) {
+  sheetViewerContainer.innerHTML = "";
+  sheetViewerContainer.style.display = "block";
+
+  if (isCsv) {
+    const decoder = new TextDecoder("utf-8");
+    const text = decoder.decode(arrayBuffer);
+    const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+    if (lines.length === 0) {
+      sheetViewerContainer.innerHTML = "<p style='color:#8b949e;text-align:center;'>Таблица пуста</p>";
+      return;
+    }
+    const delimiter = text.includes("\t") ? "\t" : (text.includes(";") ? ";" : ",");
+    let html = `<table class="sheet-table">`;
+    lines.forEach((line, li) => {
+      const cols = line.split(delimiter);
+      html += `<tr>`;
+      cols.forEach(c => {
+        const tag = li === 0 ? "th" : "td";
+        html += `<${tag}>${escapeHtml(c.trim())}</${tag}>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</table>`;
+    sheetViewerContainer.innerHTML = html;
+    return;
+  }
+
+  // Парсинг .xlsx через JSZip
+  try {
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    // 1. Shared Strings
+    const sstFile = zip.file("xl/sharedStrings.xml");
+    const sharedStrings = [];
+    if (sstFile) {
+      const sstXml = await sstFile.async("string");
+      const parser = new DOMParser();
+      const sstDoc = parser.parseFromString(sstXml, "application/xml");
+      const siNodes = Array.from(sstDoc.querySelectorAll("*")).filter(n => n.localName === "si");
+      siNodes.forEach(si => {
+        const tNodes = Array.from(si.querySelectorAll("*")).filter(n => n.localName === "t");
+        sharedStrings.push(tNodes.map(t => t.textContent).join(""));
+      });
+    }
+
+    // 2. Первый лист
+    const sheetFile = zip.file("xl/worksheets/sheet1.xml");
+    if (!sheetFile) throw new Error("sheet1.xml not found");
+    const sheetXml = await sheetFile.async("string");
+    const parser = new DOMParser();
+    const sheetDoc = parser.parseFromString(sheetXml, "application/xml");
+    const rows = Array.from(sheetDoc.querySelectorAll("*")).filter(n => n.localName === "row");
+
+    if (rows.length === 0) {
+      sheetViewerContainer.innerHTML = "<p style='color:#8b949e;text-align:center;'>Таблица пуста</p>";
+      return;
+    }
+
+    let html = `<table class="sheet-table">`;
+    rows.forEach((row, ri) => {
+      const cells = Array.from(row.querySelectorAll("*")).filter(n => n.localName === "c");
+      html += `<tr>`;
+      cells.forEach(cell => {
+        const tAttr = cell.getAttribute("t");
+        const vNode = Array.from(cell.querySelectorAll("*")).find(n => n.localName === "v");
+        let val = vNode ? vNode.textContent : "";
+        if (tAttr === "s" && sharedStrings[parseInt(val, 10)] !== undefined) {
+          val = sharedStrings[parseInt(val, 10)];
+        }
+        const tag = ri === 0 ? "th" : "td";
+        html += `<${tag}>${escapeHtml(val)}</${tag}>`;
+      });
+      html += `</tr>`;
+    });
+    html += `</table>`;
+    sheetViewerContainer.innerHTML = html;
+
+  } catch (err) {
+    console.error("Spreadsheet parse error:", err);
+    showFileCard(currentViewerFileObj, "📈", t("docLoadError"));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 4. Карточка-заглушка с кнопками действия (для .ppt, архивов и сбоев)
+// ---------------------------------------------------------------------------
+function showFileCard(fileObj, icon = "📁", noticeText = "") {
+  resetViewerContainers();
+  cardViewerContainer.style.display = "flex";
+  fileCardIcon.textContent = icon;
+  fileCardName.textContent = fileObj.title || "";
+  fileCardNotice.textContent = noticeText || t("pptFormatNotice");
+
+  const url = `${API_BASE}/file/view/${fileObj.id}`;
+
+  if (cardDownloadBtn) {
+    cardDownloadBtn.textContent = t("downloadFile");
+    cardDownloadBtn.onclick = () => {
+      if (tg && tg.openLink) {
+        tg.openLink(url);
+      } else {
+        window.open(url, "_blank");
+      }
+    };
+  }
+
+  if (cardSendChatBtn) {
+    cardSendChatBtn.textContent = t("sendToChatBtn");
+    cardSendChatBtn.onclick = async () => {
+      cardSendChatBtn.disabled = true;
+      cardSendChatBtn.textContent = t("sendingBtn");
+      try {
+        const uid = currentUserId || (tg?.initDataUnsafe?.user?.id);
+        const res = await fetch(`${API_BASE}/send-to-chat?userId=${uid}&fileId=${fileObj.id}`, { method: "POST" });
+        if (res.ok) {
+          notify(t("sentOk"));
+        } else {
+          notify(t("sendErr"));
+        }
+      } catch (e) {
+        notify(t("netErr"));
+      } finally {
+        cardSendChatBtn.disabled = false;
+        cardSendChatBtn.textContent = t("sendToChatBtn");
+      }
+    };
+  }
+}
+
+// Копирование кода / текста
+if (codeCopyBtn) {
+  codeCopyBtn.onclick = async () => {
+    if (!currentCodeText) return;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(currentCodeText);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = currentCodeText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      notify(t("copied"));
+    } catch (e) {
+      notify(t("copied"));
+    }
+  };
+}
+
+// ---------------------------------------------------------------------------
+// 5. Главный универсальный просмотрщик (openUniversalViewer)
+// ---------------------------------------------------------------------------
 async function openUniversalViewer(fileObj) {
   resetViewerContainers();
+  currentViewerFileObj = fileObj;
   fileViewerTitle.textContent = fileObj.title || "";
   fileViewerModal.dataset.fileId = fileObj.id;
   fileViewerModal.style.display = "flex";
+
   if (viewerLoading) {
     viewerLoading.style.display = "flex";
     viewerLoadingText.textContent = t("docLoading");
   }
 
-  const fname = (fileObj.title || "").toLowerCase();
   const url = `${API_BASE}/file/view/${fileObj.id}`;
+  const meta = getFileMeta(fileObj.title);
 
   try {
-    if (fname.endsWith(".pdf") || activeTab === "pdf") {
-      // PDF документ через PDF.js
+    // 1. Презентация PowerPoint (.pptx)
+    if (meta.type === "pptx") {
+      const fname = (fileObj.title || "").toLowerCase();
+      if (fname.endsWith(".ppt") && !fname.endsWith(".pptx")) {
+        // Старый бинарный формат PowerPoint 97-2003 (.ppt)
+        if (viewerLoading) viewerLoading.style.display = "none";
+        showFileCard(fileObj, "📊", t("pptFormatNotice"));
+        return;
+      }
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const ab = await res.arrayBuffer();
+      activePptxSlides = await parsePptxSlides(ab);
+      currentPptxSlideIdx = 0;
+      isPptxAllMode = false;
+      pptxViewerContainer.style.display = "flex";
+      pptxControls.style.display = "flex";
+      updatePptxView();
+      if (viewerLoading) viewerLoading.style.display = "none";
+      return;
+    }
+
+    // 2. PDF Документ (.pdf)
+    if (meta.type === "pdf") {
       const res = await fetch(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
       activePdfArrayBuffer = await res.arrayBuffer();
       activePdfScale = 1.0;
       await renderPdfDocument(activePdfArrayBuffer, 1.0);
-    } else if (fname.endsWith(".docx") || fname.endsWith(".doc")) {
-      // Word (.docx) через mammoth.js
+      return;
+    }
+
+    // 3. Word Документ (.docx)
+    if (meta.type === "docx") {
+      const fname = (fileObj.title || "").toLowerCase();
+      if (fname.endsWith(".doc") && !fname.endsWith(".docx")) {
+        // Старый формат Word 97-2003 (.doc)
+        if (viewerLoading) viewerLoading.style.display = "none";
+        showFileCard(fileObj, "📝", t("pptFormatNotice").replace(".ppt", ".doc"));
+        return;
+      }
       const res = await fetch(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
       const ab = await res.arrayBuffer();
@@ -778,28 +1474,66 @@ async function openUniversalViewer(fileObj) {
       } else {
         docViewerContainer.innerHTML = `<p>${t("docLoadError")}</p>`;
       }
-    } else if (fname.endsWith(".png") || fname.endsWith(".jpg") || fname.endsWith(".jpeg") || fname.endsWith(".webp") || fname.endsWith(".gif") || fname.endsWith(".svg")) {
-      // Картинка
+      return;
+    }
+
+    // 4. Таблицы (.xlsx, .xls, .csv)
+    if (meta.type === "xlsx") {
+      const fname = (fileObj.title || "").toLowerCase();
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const ab = await res.arrayBuffer();
+      if (viewerLoading) viewerLoading.style.display = "none";
+      await renderSpreadsheet(ab, fname.endsWith(".csv"));
+      return;
+    }
+
+    // 5. Изображение
+    if (meta.type === "image") {
       viewerImage.src = url;
       imageViewerContainer.style.display = "flex";
       if (viewerLoading) viewerLoading.style.display = "none";
-    } else if (fname.endsWith(".txt") || fname.endsWith(".java") || fname.endsWith(".py") || fname.endsWith(".sql") || fname.endsWith(".json") || fname.endsWith(".md") || fname.endsWith(".xml") || fname.endsWith(".html")) {
-      // Текст или исходный код
-      const res = await fetch(url);
-      const text = await res.text();
-      viewerCode.textContent = text;
-      codeViewerContainer.style.display = "block";
-      if (viewerLoading) viewerLoading.style.display = "none";
-    } else {
-      // Прочие файлы через iframe
-      fileViewerFrame.src = url;
-      fileViewerFrame.style.display = "block";
-      if (viewerLoading) viewerLoading.style.display = "none";
+      return;
     }
+
+    // 6. Аудио (.mp3, .wav, .ogg, .m4a)
+    if (meta.type === "audio") {
+      audioTrackTitle.textContent = fileObj.title || "Аудиозапись";
+      viewerAudio.src = url;
+      audioViewerContainer.style.display = "flex";
+      viewerAudio.load();
+      if (viewerLoading) viewerLoading.style.display = "none";
+      return;
+    }
+
+    // 7. Текст или исходный код
+    if (meta.type === "text") {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      currentCodeText = await res.text();
+      viewerCode.textContent = currentCodeText;
+      codeViewerContainer.style.display = "block";
+      if (codeCopyBtn) codeCopyBtn.style.display = "flex";
+      if (viewerLoading) viewerLoading.style.display = "none";
+      return;
+    }
+
+    // 8. Архивы или прочие форматы
+    if (meta.type === "zip") {
+      if (viewerLoading) viewerLoading.style.display = "none";
+      showFileCard(fileObj, "📦", "Файловый архив");
+      return;
+    }
+
+    // Fallback: пробуем iframe или карточку
+    fileViewerFrame.src = url;
+    fileViewerFrame.style.display = "block";
+    if (viewerLoading) viewerLoading.style.display = "none";
+
   } catch (err) {
     console.error("Ошибка открытия файла:", err);
     if (viewerLoading) viewerLoading.style.display = "none";
-    notify(t("docLoadError"));
+    showFileCard(fileObj, meta.icon || "📁", t("docLoadError"));
   }
 }
 
@@ -812,7 +1546,7 @@ async function fileExistsOnServer(url) {
   }
 }
 
-// Point 5: Открытие любого файла (PDF, Word, картинки, видео, ZIP)
+// Открытие любого файла (Презентации, PDF, Word, Картинки, Видео, Архивы)
 openDirectBtn.onclick = async () => {
   const l = currentSelectedLesson;
   if (!l) return;
@@ -824,11 +1558,14 @@ openDirectBtn.onclick = async () => {
 
   if (!fileObj) return;
 
-  // Видео из домашки - загружаем в плеер
-  if (fileObj.isVideo || (fileObj.title || "").toLowerCase().endsWith(".mp4")) {
+  const fname = (fileObj.title || "").toLowerCase();
+  const meta = getFileMeta(fname);
+
+  // Видео - загружаем в плеер
+  if (meta.type === "video" || fileObj.isVideo || fname.endsWith(".mp4") || fname.endsWith(".mov")) {
     videoPlayer.src = `${API_BASE}/video/stream/${fileObj.id}`;
     videoPlayer.load();
-    videoPlayer.play();
+    videoPlayer.play().catch(() => {});
     videoPartTitle.textContent = fileObj.title;
     notify(t("hwVideoLoaded"));
     return;
@@ -841,18 +1578,7 @@ openDirectBtn.onclick = async () => {
     return;
   }
 
-  const fname = (fileObj.title || "").toLowerCase();
-  // Архивы скачиваем
-  if (fname.endsWith(".zip") || fname.endsWith(".rar") || fname.endsWith(".tar.gz") || activeTab === "zip") {
-    if (tg && tg.openLink) {
-      tg.openLink(url);
-    } else {
-      window.open(url, "_blank");
-    }
-    return;
-  }
-
-  // Все остальные документы и файлы открываем прямо в Mini App
+  // Все файлы (PPTX, PDF, DOCX, XLSX, TXT, картинки, аудио, архивы) открываются прямо в Mini App
   openUniversalViewer(fileObj);
 };
 
