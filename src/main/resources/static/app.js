@@ -862,24 +862,66 @@ const rotateVideoBtn = document.getElementById("rotateVideoBtn");
 const exitLandscapeBtn = document.getElementById("exitLandscapeBtn");
 let isRotatedLandscape = false;
 
+function isMobilePhone() {
+  const ua = (navigator.userAgent || "").toLowerCase();
+  const isMobileOS = /android|iphone|ipod/i.test(ua);
+  return isMobileOS && (window.innerWidth < window.innerHeight);
+}
+
+function getRotateButtonTitle() {
+  if (!isMobilePhone()) {
+    const dict = {
+      ru: "Во весь экран",
+      uz: "To'liq ekran",
+      en: "Fullscreen",
+    };
+    return dict[currentLang] || dict.ru;
+  } else {
+    return t("rotateVideo");
+  }
+}
+
 function toggleVideoRotation() {
-  isRotatedLandscape = !isRotatedLandscape;
-  if (isRotatedLandscape) {
-    applyCssLandscape();
-    if (screen.orientation && screen.orientation.lock) {
-      screen.orientation.lock('landscape').catch(() => {});
+  if (isMobilePhone()) {
+    // На смартфонах в вертикальном положении: поворот в альбомный режим (CSS landscape)
+    isRotatedLandscape = !isRotatedLandscape;
+    if (isRotatedLandscape) {
+      applyCssLandscape();
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(() => {});
+      }
+    } else {
+      exitCssLandscape();
+      if (screen.orientation && screen.orientation.unlock) {
+        screen.orientation.unlock();
+      }
     }
   } else {
+    // На ПК (десктоп, ноутбук): НИКАКОГО поворота на 90 градусов!
+    // Обычный горизонтальный полноэкранный режим (как на втором скриншоте)!
     exitCssLandscape();
-    if (screen.orientation && screen.orientation.unlock) {
-      screen.orientation.unlock();
+    const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    if (!isFs) {
+      if (videoPlayer.requestFullscreen) {
+        videoPlayer.requestFullscreen().catch(() => {});
+      } else if (videoPlayer.webkitRequestFullscreen) {
+        videoPlayer.webkitRequestFullscreen();
+      } else if (videoContainer && videoContainer.requestFullscreen) {
+        videoContainer.requestFullscreen().catch(() => {});
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
     }
   }
 }
 
 function updateRotateBtnTooltip() {
   if (!rotateVideoBtn) return;
-  const text = t("rotateVideo");
+  const text = getRotateButtonTitle();
   rotateVideoBtn.title = text;
   rotateVideoBtn.setAttribute("aria-label", text);
   rotateVideoBtn.setAttribute("data-tooltip", text);
