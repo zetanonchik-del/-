@@ -918,24 +918,85 @@ if (videoContainer) {
   videoContainer.addEventListener("touchstart", showRotateBtn, { passive: true });
 }
 
-// Двойной тап / клик: -10 сек (слева), +10 сек (справа), переворот (по центру)
-const tapFeedbackLeft = document.getElementById("tapFeedbackLeft");
+// YouTube-style Quick Seek (+5, +10, +15...) & Center Orientation Flip
+const seekOverlayLeft = document.getElementById("seekOverlayLeft");
+const seekOverlayRight = document.getElementById("seekOverlayRight");
+const seekSecondsLeft = document.getElementById("seekSecondsLeft");
+const seekSecondsRight = document.getElementById("seekSecondsRight");
 const tapFeedbackCenter = document.getElementById("tapFeedbackCenter");
-const tapFeedbackRight = document.getElementById("tapFeedbackRight");
 
-let feedbackTimer = null;
-function triggerTapFeedback(el) {
-  if (!el) return;
-  [tapFeedbackLeft, tapFeedbackCenter, tapFeedbackRight].forEach(f => f && f.classList.remove("show"));
-  clearTimeout(feedbackTimer);
-  void el.offsetWidth;
-  el.classList.add("show");
-  feedbackTimer = setTimeout(() => {
-    el.classList.remove("show");
+let quickSeekAccumulator = 0;
+let quickSeekSide = null; // 'left' | 'right' | null
+let quickSeekHideTimer = null;
+let centerFeedbackTimer = null;
+
+function triggerCenterFeedback() {
+  if (!tapFeedbackCenter) return;
+  hideSeekFeedback();
+  clearTimeout(centerFeedbackTimer);
+  tapFeedbackCenter.classList.remove("show");
+  void tapFeedbackCenter.offsetWidth;
+  tapFeedbackCenter.classList.add("show");
+  centerFeedbackTimer = setTimeout(() => {
+    tapFeedbackCenter.classList.remove("show");
   }, 650);
 }
 
-function handleVideoDoubleAction(clientX, clientY) {
+function hideSeekFeedback() {
+  if (seekOverlayLeft) seekOverlayLeft.classList.remove("active");
+  if (seekOverlayRight) seekOverlayRight.classList.remove("active");
+  clearTimeout(quickSeekHideTimer);
+}
+
+function showSeekFeedback(side, seconds) {
+  if (tapFeedbackCenter) tapFeedbackCenter.classList.remove("show");
+  const overlay = side === "right" ? seekOverlayRight : seekOverlayLeft;
+  const otherOverlay = side === "right" ? seekOverlayLeft : seekOverlayRight;
+  const label = side === "right" ? seekSecondsRight : seekSecondsLeft;
+
+  if (otherOverlay) otherOverlay.classList.remove("active");
+  if (!overlay || !label) return;
+
+  label.textContent = side === "right" ? `+${seconds}` : `${seconds}`;
+
+  // Restart animation
+  overlay.classList.remove("active");
+  void overlay.offsetWidth;
+  overlay.classList.add("active");
+
+  clearTimeout(quickSeekHideTimer);
+  quickSeekHideTimer = setTimeout(() => {
+    overlay.classList.remove("active");
+    quickSeekAccumulator = 0;
+    quickSeekSide = null;
+  }, 850);
+}
+
+function performQuickSeek(side) {
+  if (!videoPlayer) return;
+
+  if (quickSeekSide !== side) {
+    quickSeekAccumulator = 0;
+    quickSeekSide = side;
+  }
+
+  quickSeekAccumulator += 5;
+  const dur = Number.isFinite(videoPlayer.duration) ? videoPlayer.duration : Infinity;
+
+  if (side === "right") {
+    videoPlayer.currentTime = Math.min(dur, videoPlayer.currentTime + 5);
+  } else {
+    videoPlayer.currentTime = Math.max(0, videoPlayer.currentTime - 5);
+  }
+
+  showSeekFeedback(side, quickSeekAccumulator);
+}
+
+let lastTapTime = 0;
+let lastTapCoordX = 0;
+let lastTapCoordY = 0;
+
+function handleVideoTapGesture(clientX, clientY, isMouseDblClick = false) {
   if (!videoPlayer) return;
   const rect = videoPlayer.getBoundingClientRect();
   if (rect.width <= 0 || rect.height <= 0) return;
@@ -949,54 +1010,71 @@ function handleVideoDoubleAction(clientX, clientY) {
     relY = (clientY - rect.top) / rect.height;
   }
 
-  // Игнорируем нажатия на нижнюю полосу контролов
+  // Игнорируем нажатия на нижнюю полосу контролов плеера
   if (relY > 0.82) return;
 
-  if (relX < 0.35) {
-    // Слева: -10 сек назад
-    videoPlayer.currentTime = Math.max(0, videoPlayer.currentTime - 10);
-    triggerTapFeedback(tapFeedbackLeft);
-  } else if (relX > 0.65) {
-    // Справа: +10 сек вперед
-    const dur = Number.isFinite(videoPlayer.duration) ? videoPlayer.duration : Infinity;
-    videoPlayer.currentTime = Math.min(dur, videoPlayer.currentTime + 10);
-    triggerTapFeedback(tapFeedbackRight);
-  } else {
-    // По центру: переворачивание
-    toggleVideoRotation();
-    triggerTapFeedback(tapFeedbackCenter);
+  let side = "center";
+  if (relX < 0.38) {
+    side = "left";
+  } else if (relX > 0.62) {
+    side = "right";
   }
+
+  const now = Date.now();
+  const timeSinceLastTap = now - lastTapTime;
+  const dist = Math.hypot(clientX - lastTapCoordX, clientY - lastTapCoordY);
+
+  if (isMouseDblClick) {
+    // Двойной клик мыши на ПК
+    if (side === "center") {
+      toggleVideoRotation();
+      triggerCenterFeedback();
+    } else {
+      performQuickSeek(side);
+    }
+    lastTapTime = now;
+    lastTapCoordX = clientX;
+    lastTapCoordY = clientY;
+    return;
+  }
+
+  // Если уже идёт активная серия быстрых перемоток на этой же стороне (3-е, 4-е нажатие и т.д.):
+  if (quickSeekSide && quickSeekSide === side && timeSinceLastTap < 850) {
+    performQuickSeek(side);
+    lastTapTime = now;
+    lastTapCoordX = clientX;
+    lastTapCoordY = clientY;
+    return;
+  }
+
+  // Обнаружение двойного тапа (Double Tap)
+  if (timeSinceLastTap < 330 && dist < 60) {
+    if (side === "center") {
+      toggleVideoRotation();
+      triggerCenterFeedback();
+      quickSeekAccumulator = 0;
+      quickSeekSide = null;
+    } else {
+      performQuickSeek(side);
+    }
+  }
+
+  lastTapTime = now;
+  lastTapCoordX = clientX;
+  lastTapCoordY = clientY;
 }
 
-// 1. Двойной тап на смартфонах и планшетах (Touch)
-let lastTouchTime = 0;
-let lastTouchX = 0;
-let lastTouchY = 0;
-let lastTouchActionStamp = 0;
-
+// 1. Тач-события на смартфонах и планшетах (Touch)
 videoPlayer.addEventListener("touchstart", (e) => {
   if (e.touches && e.touches.length === 1) {
     const t = e.touches[0];
-    const now = Date.now();
-    const timeDiff = now - lastTouchTime;
-    const dist = Math.hypot(t.clientX - lastTouchX, t.clientY - lastTouchY);
-
-    if (timeDiff < 320 && dist < 50) {
-      lastTouchActionStamp = now;
-      handleVideoDoubleAction(t.clientX, t.clientY);
-      lastTouchTime = 0;
-    } else {
-      lastTouchTime = now;
-      lastTouchX = t.clientX;
-      lastTouchY = t.clientY;
-    }
+    handleVideoTapGesture(t.clientX, t.clientY, false);
   }
 }, { passive: true });
 
 // 2. Двойной клик на ПК (Mouse Double Click)
 videoPlayer.addEventListener("dblclick", (e) => {
-  if (Date.now() - lastTouchActionStamp < 600) return;
-  handleVideoDoubleAction(e.clientX, e.clientY);
+  handleVideoTapGesture(e.clientX, e.clientY, true);
 });
 
 // Отправка файла в Telegram-чат (Point 3 & Point 8)

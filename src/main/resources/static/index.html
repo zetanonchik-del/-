@@ -58,10 +58,41 @@
     <section class="player-section">
       <div class="video-container" id="videoContainer">
         <video id="videoPlayer" controls playsinline controlsList="nodownload" preload="metadata"></video>
-        <div class="video-tap-feedback feedback-left" id="tapFeedbackLeft">⏪ 10 сек</div>
-        <div class="video-tap-feedback feedback-center" id="tapFeedbackCenter">🔄</div>
-        <div class="video-tap-feedback feedback-right" id="tapFeedbackRight">10 сек ⏩</div>
-        <button id="rotateVideoBtn" class="video-rotate-btn" title="Повернуть видео">🔄</button>
+        <!-- Быстрая перемотка YouTube: +5, +10, +15... -->
+        <div class="video-seek-overlay seek-left" id="seekOverlayLeft">
+          <div class="seek-ripple"></div>
+          <div class="seek-badge">
+            <span class="seek-chevron">‹</span>
+            <span class="seek-seconds" id="seekSecondsLeft">5</span>
+          </div>
+        </div>
+
+        <div class="video-tap-feedback feedback-center" id="tapFeedbackCenter">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+            <polyline points="21 3 21 8 16 8"></polyline>
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+            <polyline points="3 21 3 16 8 16"></polyline>
+          </svg>
+        </div>
+
+        <div class="video-seek-overlay seek-right" id="seekOverlayRight">
+          <div class="seek-ripple"></div>
+          <div class="seek-badge">
+            <span class="seek-seconds" id="seekSecondsRight">+5</span>
+            <span class="seek-chevron">›</span>
+          </div>
+        </div>
+
+        <!-- Кнопка поворота экрана: чистый стильный векторный SVG вместо эмодзи -->
+        <button id="rotateVideoBtn" class="video-rotate-btn" title="Повернуть видео" aria-label="Повернуть видео">
+          <svg class="rotate-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+            <polyline points="21 3 21 8 16 8"></polyline>
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+            <polyline points="3 21 3 16 8 16"></polyline>
+          </svg>
+        </button>
         <button id="exitLandscapeBtn" class="exit-landscape-btn" style="display:none;">✕</button>
       </div>
       <div class="media-parts-bar" id="videoBar">
