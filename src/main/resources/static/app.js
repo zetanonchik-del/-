@@ -590,42 +590,48 @@ function escapeHtml(str) {
 
 function getFileMeta(fileName) {
   const fname = (fileName || "").toLowerCase().trim();
+  const parts = fname.split('.');
+  const rawExt = parts.length > 1 ? parts.pop().toUpperCase() : "FILE";
+
   if (fname.endsWith(".md")) {
-    return { type: "markdown", icon: "📝", btnKey: "readMarkdownBtn", ext: "MD" };
+    return { type: "markdown", label: "MD", btnKey: "readMarkdownBtn", ext: "MD", badgeClass: "type-markdown" };
   }
   if (fname.endsWith(".pptx") || fname.endsWith(".ppt") || fname.endsWith(".odp") || fname.endsWith(".pps") || fname.endsWith(".ppsx")) {
-    return { type: "pptx", icon: "📊", btnKey: "openPptBtn", ext: "PPTX" };
+    return { type: "pptx", label: "PPT", btnKey: "openPptBtn", ext: "PPTX", badgeClass: "type-pptx" };
   }
   if (fname.endsWith(".pdf")) {
-    return { type: "pdf", icon: "📄", btnKey: "openPdfBtn", ext: "PDF" };
+    return { type: "pdf", label: "PDF", btnKey: "openPdfBtn", ext: "PDF", badgeClass: "type-pdf" };
   }
   if (fname.endsWith(".docx") || fname.endsWith(".doc") || fname.endsWith(".odt") || fname.endsWith(".rtf")) {
-    return { type: "docx", icon: "📝", btnKey: "openDocBtn", ext: "DOCX" };
+    return { type: "docx", label: "DOC", btnKey: "openDocBtn", ext: "DOCX", badgeClass: "type-docx" };
   }
   if (fname.endsWith(".xlsx") || fname.endsWith(".xls") || fname.endsWith(".csv") || fname.endsWith(".ods")) {
-    return { type: "xlsx", icon: "📈", btnKey: "openSheetBtn", ext: "XLSX" };
+    return { type: "xlsx", label: rawExt === "CSV" ? "CSV" : "XLS", btnKey: "openSheetBtn", ext: rawExt, badgeClass: "type-sheet" };
   }
-  if (fname.endsWith(".txt") || fname.endsWith(".log") || fname.endsWith(".json") ||
-      fname.endsWith(".xml") || fname.endsWith(".java") || fname.endsWith(".py") || fname.endsWith(".js") ||
-      fname.endsWith(".ts") || fname.endsWith(".html") || fname.endsWith(".css") || fname.endsWith(".sql") ||
-      fname.endsWith(".c") || fname.endsWith(".cpp") || fname.endsWith(".h") || fname.endsWith(".cs") ||
-      fname.endsWith(".sh") || fname.endsWith(".bat") || fname.endsWith(".yml") || fname.endsWith(".yaml")) {
-    return { type: "text", icon: "📋", btnKey: "readTextBtn", ext: fname.split('.').pop().toUpperCase() };
+  if (fname.endsWith(".mp3") || fname.endsWith(".wav") || fname.endsWith(".ogg") || fname.endsWith(".m4a") || fname.endsWith(".flac") || fname.endsWith(".aac")) {
+    return { type: "audio", label: rawExt.slice(0, 4), btnKey: "playAudioBtn", ext: "AUDIO", badgeClass: "type-audio" };
+  }
+  if (fname.endsWith(".mp4") || fname.endsWith(".mov") || fname.endsWith(".webm") || fname.endsWith(".mkv") || fname.endsWith(".avi")) {
+    return { type: "video", label: rawExt.slice(0, 4), btnKey: "watchVideoBtn", ext: "VIDEO", badgeClass: "type-video" };
+  }
+  if (fname.endsWith(".zip") || fname.endsWith(".rar") || fname.endsWith(".7z") || fname.endsWith(".tar.gz") || fname.endsWith(".gz") || fname.endsWith(".tar")) {
+    const lbl = fname.endsWith(".tar.gz") ? "TAR" : rawExt.slice(0, 4);
+    return { type: "zip", label: lbl, btnKey: "downloadZipBtn", ext: "ZIP", badgeClass: "type-zip" };
   }
   if (fname.endsWith(".png") || fname.endsWith(".jpg") || fname.endsWith(".jpeg") || fname.endsWith(".webp") ||
       fname.endsWith(".gif") || fname.endsWith(".svg") || fname.endsWith(".bmp")) {
-    return { type: "image", icon: "🖼️", btnKey: "viewImageBtn", ext: "IMG" };
+    return { type: "image", label: rawExt.slice(0, 4), btnKey: "viewImageBtn", ext: "IMG", badgeClass: "type-image" };
   }
-  if (fname.endsWith(".mp4") || fname.endsWith(".mov") || fname.endsWith(".webm") || fname.endsWith(".mkv") || fname.endsWith(".avi")) {
-    return { type: "video", icon: "🎬", btnKey: "watchVideoBtn", ext: "VIDEO" };
+  if (fname.endsWith(".java") || fname.endsWith(".py") || fname.endsWith(".js") || fname.endsWith(".ts") ||
+      fname.endsWith(".html") || fname.endsWith(".css") || fname.endsWith(".sql") || fname.endsWith(".json") ||
+      fname.endsWith(".xml") || fname.endsWith(".c") || fname.endsWith(".cpp") || fname.endsWith(".h") ||
+      fname.endsWith(".cs") || fname.endsWith(".sh") || fname.endsWith(".bat") || fname.endsWith(".yml") || fname.endsWith(".yaml")) {
+    return { type: "text", label: rawExt.slice(0, 4), btnKey: "readTextBtn", ext: rawExt, badgeClass: "type-code" };
   }
-  if (fname.endsWith(".mp3") || fname.endsWith(".wav") || fname.endsWith(".ogg") || fname.endsWith(".m4a") || fname.endsWith(".flac")) {
-    return { type: "audio", icon: "🎵", btnKey: "playAudioBtn", ext: "AUDIO" };
+  if (fname.endsWith(".txt") || fname.endsWith(".log")) {
+    return { type: "text", label: "TXT", btnKey: "readTextBtn", ext: "TXT", badgeClass: "type-text" };
   }
-  if (fname.endsWith(".zip") || fname.endsWith(".rar") || fname.endsWith(".7z") || fname.endsWith(".tar.gz") || fname.endsWith(".gz")) {
-    return { type: "zip", icon: "📦", btnKey: "downloadZipBtn", ext: "ZIP" };
-  }
-  return { type: "generic", icon: "📎", btnKey: "openFileBtn", ext: "FILE" };
+  return { type: "generic", label: rawExt.slice(0, 4) || "FILE", btnKey: "openFileBtn", ext: rawExt || "FILE", badgeClass: "type-generic" };
 }
 
 window.handleOpenFile = async function(fileId) {
@@ -671,20 +677,43 @@ window.handleSendFileToChat = async function(fileId, btnEl) {
   if (btnEl) {
     btnEl.disabled = true;
     originalHtml = btnEl.innerHTML;
-    btnEl.textContent = t("sendingBtn");
+    btnEl.classList.add("sending");
+    btnEl.innerHTML = `
+      <svg class="spin-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+      </svg>
+    `;
   }
 
   try {
     const res = await fetch(`${API_BASE}/send-to-chat?userId=${uid}&fileId=${fileId}`, { method: "POST" });
     if (res.ok) {
       notify(t("sentOk"));
+      if (btnEl) {
+        btnEl.classList.remove("sending");
+        btnEl.classList.add("sent");
+        btnEl.innerHTML = `
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#2ea043" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        `;
+        setTimeout(() => {
+          if (btnEl) {
+            btnEl.classList.remove("sent");
+            btnEl.disabled = false;
+            btnEl.innerHTML = originalHtml;
+          }
+        }, 1800);
+        return;
+      }
     } else {
       notify(t("sendErr"));
     }
   } catch (e) {
     notify(t("netErr"));
   } finally {
-    if (btnEl) {
+    if (btnEl && !btnEl.classList.contains("sent")) {
+      btnEl.classList.remove("sending");
       btnEl.disabled = false;
       btnEl.innerHTML = originalHtml;
     }
@@ -717,7 +746,7 @@ function updateTabContent() {
         card.className = "file-item-card";
         card.innerHTML = `
           <div class="file-item-left">
-            <div class="file-icon-badge">${meta.icon}</div>
+            <div class="file-icon-badge ${meta.badgeClass}">${meta.label}</div>
             <div class="file-item-info">
               <span class="file-item-name" title="${escapeHtml(f.title)}">${escapeHtml(f.title)}</span>
               <span class="file-item-ext">${meta.ext}</span>
@@ -731,11 +760,12 @@ function updateTabContent() {
               </svg>
               <span>${t(meta.btnKey) || t("openBtn")}</span>
             </button>
-            <button class="file-action-btn btn-chat-secondary" onclick="handleSendFileToChat(${f.id}, this)">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            <button class="file-action-btn btn-chat-icon" onclick="handleSendFileToChat(${f.id}, this)" title="${t("sendToChatBtn") || "Chatga yuborish"}" aria-label="Chatga yuborish">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
               </svg>
-              <span>${t("sendToChatBtn")}</span>
             </button>
           </div>
         `;
