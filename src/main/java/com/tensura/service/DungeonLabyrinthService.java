@@ -39,9 +39,6 @@ public class DungeonLabyrinthService {
         public int damageTaken;
     }
 
-    /**
-     * Explore the current floor of Ramiris Labyrinth.
-     */
     @Transactional
     public LabyrinthExploreEvent exploreFloor(Player player) {
         log.info("Player [{}] exploring Labyrinth floor [{}]", player.getTelegramId(), player.getCurrentLabyrinthFloor());
@@ -49,7 +46,6 @@ public class DungeonLabyrinthService {
         int floor = player.getCurrentLabyrinthFloor();
         LabyrinthExploreEvent event = new LabyrinthExploreEvent();
 
-        // Check if boss floor (every 10th floor)
         if (floor % 10 == 0) {
             event.type = EventType.BOSS_CHAMBER;
             event.monster = generateBossForFloor(floor);
@@ -63,10 +59,9 @@ public class DungeonLabyrinthService {
             return event;
         }
 
-        // Random roll for non-boss floors
         double roll = random.nextDouble();
         if (roll < 0.55) {
-            // Regular monster encounter
+            
             event.type = EventType.MONSTER_AMBUSH;
             event.monster = generateWildMonsterForFloor(floor);
             event.title = String.format("⚔️ <b>ЗАСАДА НА ЭТАЖЕ [%d]</b>", floor);
@@ -75,7 +70,7 @@ public class DungeonLabyrinthService {
                     event.monster.getName(), event.monster.getRank(), event.monster.getLevel()
             );
         } else if (roll < 0.75) {
-            // Treasure chest
+            
             event.type = EventType.TREASURE_CHEST;
             long foundStellas = 150L + (floor * 35L) + random.nextInt(100);
             long foundCrystals = (floor >= 15) ? (1 + (floor / 10)) : 0;
@@ -94,7 +89,7 @@ public class DungeonLabyrinthService {
                     foundStellas
             );
         } else if (roll < 0.90) {
-            // Magic trap
+            
             event.type = EventType.MAGIC_TRAP;
             int trapDmg = Math.max(10, (int) (player.getMaxHp() * 0.12));
             player.takeDamage(trapDmg);
@@ -109,7 +104,7 @@ public class DungeonLabyrinthService {
                     trapDmg
             );
         } else {
-            // Rest sanctuary
+            
             event.type = EventType.REST_SANCTUARY;
             int heal = (int) (player.getMaxHp() * 0.40);
             int restoreMp = (int) (player.getMaxMp() * 0.35);

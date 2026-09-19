@@ -28,7 +28,6 @@ public class Player {
     @Column(nullable = false)
     private String nickname;
 
-    // --- Race & Evolution Tier ---
     @Column(nullable = false)
     @Builder.Default
     private String race = "Слизь (Slime)";
@@ -39,9 +38,8 @@ public class Player {
 
     @Column(nullable = false)
     @Builder.Default
-    private int evolutionStage = 1; // 1: Slime, 2: Intelligent, 3: Demon Slime, 4: True Demon Lord / Dragonoid
+    private int evolutionStage = 1; 
 
-    // --- Progression ---
     @Column(nullable = false)
     @Builder.Default
     private int level = 1;
@@ -56,9 +54,8 @@ public class Player {
 
     @Column(nullable = false)
     @Builder.Default
-    private long collectedSouls = 0L; // Harvest festival souls
+    private long collectedSouls = 0L; 
 
-    // --- Combat Attributes ---
     @Column(nullable = false)
     @Builder.Default
     private int hp = GameBalanceConfig.BASE_SLIME_HP;
@@ -69,7 +66,7 @@ public class Player {
 
     @Column(nullable = false)
     @Builder.Default
-    private int mp = GameBalanceConfig.BASE_SLIME_MP; // Magicules
+    private int mp = GameBalanceConfig.BASE_SLIME_MP; 
 
     @Column(nullable = false)
     @Builder.Default
@@ -91,7 +88,6 @@ public class Player {
     @Builder.Default
     private int intelligence = GameBalanceConfig.BASE_SLIME_INT;
 
-    // --- Stamina & Exploration ---
     @Column(nullable = false)
     @Builder.Default
     private int stamina = GameBalanceConfig.BASE_MAX_STAMINA;
@@ -112,10 +108,9 @@ public class Player {
     @Builder.Default
     private int highestLabyrinthFloor = 1;
 
-    // --- Currencies & Reputation ---
     @Column(nullable = false)
     @Builder.Default
-    private long stellas = GameBalanceConfig.STARTING_STELLAS; // Star coins
+    private long stellas = GameBalanceConfig.STARTING_STELLAS; 
 
     @Column(nullable = false)
     @Builder.Default
@@ -125,19 +120,17 @@ public class Player {
     @Builder.Default
     private long reputation = 0L;
 
-    // --- Equipped Gear IDs ---
     private Long equippedWeaponId;
     private Long equippedArmorId;
     private Long equippedAccessoryId;
 
-    // --- Status Flags ---
     @Column(nullable = false)
     @Builder.Default
     private boolean inBattle = false;
 
     @Column(nullable = false)
     @Builder.Default
-    private boolean inComa = false; // Overuse of magicules in naming
+    private boolean inComa = false; 
 
     private LocalDateTime comaUntil;
 
@@ -145,7 +138,6 @@ public class Player {
     @Builder.Default
     private String activeTitle = "Одинокая Слизь из Пещеры Запечатывания";
 
-    // --- Timestamps ---
     @Column(nullable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -153,8 +145,6 @@ public class Player {
     @Column(nullable = false)
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
-
-    // --- Helper Domain Logic Methods ---
 
     public void restoreFullHealth() {
         this.hp = this.maxHp;

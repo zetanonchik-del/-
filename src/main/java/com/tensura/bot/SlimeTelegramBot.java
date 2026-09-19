@@ -72,10 +72,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    // ==========================================
-    //            TEXT COMMAND DISPATCHER
-    // ==========================================
-
     private void handleTextMessage(Message message) {
         Long chatId = message.getChatId();
         Long telegramId = message.getFrom().getId();
@@ -87,7 +83,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
 
         Player player = getOrCreatePlayer(telegramId, username, firstName);
 
-        // Check if player is in magicule coma from naming
         if (player.isInComa()) {
             if (player.getComaUntil() != null && LocalDateTime.now().isBefore(player.getComaUntil())) {
                 long minutesLeft = java.time.Duration.between(LocalDateTime.now(), player.getComaUntil()).toMinutes() + 1;
@@ -124,10 +119,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
         }
     }
 
-    // ==========================================
-    //          CALLBACK QUERY DISPATCHER
-    // ==========================================
-
     private void handleCallbackQuery(CallbackQuery cb) {
         Long chatId = cb.getMessage().getChatId();
         Integer messageId = cb.getMessage().getMessageId();
@@ -155,7 +146,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
             }
         }
 
-        // --- Navigation Handlers ---
         if (data.equals("NAV_MAIN")) {
             sendWelcomeMessage(chatId, player);
         } else if (data.equals("NAV_PROFILE")) {
@@ -186,7 +176,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
             showCaravan(chatId, player);
         }
 
-        // --- Battle Handlers ---
         else if (data.equals("BATTLE_ATTACK")) {
             handleBattleAttack(chatId, messageId, player);
         } else if (data.equals("BATTLE_SKILL_MENU")) {
@@ -206,7 +195,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
             showBattleScreen(chatId, messageId, player);
         }
 
-        // --- City & Crafting Handlers ---
         else if (data.equals("CITY_COLLECT")) {
             String report = cityManagementService.collectResources(telegramId);
             editHtml(chatId, messageId, report, keyboardFactory.createCityKeyboard());
@@ -230,30 +218,25 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
             editHtml(chatId, messageId, adr.combatSummary, keyboardFactory.createCityKeyboard());
         }
 
-        // --- Labyrinth Handlers ---
         else if (data.equals("LAB_EXPLORE")) {
             handleLabyrinthExplore(chatId, messageId, player);
         }
 
-        // --- Raid Handlers ---
         else if (data.startsWith("RAID_START_")) {
             String bossTarget = data.substring("RAID_START_".length());
             handleRaidStart(chatId, player, bossTarget);
         }
 
-        // --- Evolution Handlers ---
         else if (data.equals("EVOLVE_EXECUTE")) {
             EvolutionService.EvolutionExecutionResult er = evolutionService.performEvolution(player);
             editHtml(chatId, messageId, er.storyNarrative, keyboardFactory.createBackToMainKeyboard());
         }
 
-        // --- Naming Handlers ---
         else if (data.startsWith("NAME_CANDIDATE_")) {
             String spec = data.substring("NAME_CANDIDATE_".length());
             handleBestowNameCandidate(chatId, messageId, player, spec);
         }
 
-        // --- Casino Handlers ---
         else if (data.startsWith("CASINO_DICE_")) {
             long bet = Long.parseLong(data.substring("CASINO_DICE_".length()));
             CasinoMiniGamesService.CasinoGameResult gr = casinoMiniGamesService.playGoblinDice(player, bet);
@@ -267,16 +250,11 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
             editHtml(chatId, messageId, gr.title + "\n\n" + gr.details, keyboardFactory.createCasinoKeyboard());
         }
 
-        // --- Inventory Pagination ---
         else if (data.startsWith("INV_PAGE_")) {
             int targetPage = Integer.parseInt(data.substring("INV_PAGE_".length()));
             showInventory(chatId, player, targetPage);
         }
     }
-
-    // ==========================================
-    //            SCREEN CONTROLLERS
-    // ==========================================
 
     private void sendWelcomeMessage(Long chatId, Player player) {
         String text = String.format("""
@@ -483,10 +461,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
         editHtml(chatId, messageId, sb.toString(), keyboardFactory.createForgeRecipesKeyboard(recipes));
     }
 
-    // ==========================================
-    //            BATTLE ACTIONS
-    // ==========================================
-
     private void startWildForestHunt(Long chatId, Player player) {
         if (!player.consumeStamina(15)) {
             sendHtml(chatId, "⚡ <b>Недостаточно выносливости для экспедиции в Лес Джура!</b> (Требуется: 15 ед.). Она восстанавливается каждые несколько минут.");
@@ -571,10 +545,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
         });
     }
 
-    // ==========================================
-    //            LABYRINTH & RAIDS
-    // ==========================================
-
     private void handleLabyrinthExplore(Long chatId, Integer messageId, Player player) {
         if (!player.consumeStamina(10)) {
             editHtml(chatId, messageId, "⚡ <b>Недостаточно выносливости для исследования Лабиринта!</b>", keyboardFactory.createBackToMainKeyboard());
@@ -629,10 +599,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
         editHtml(chatId, messageId, nr.message, keyboardFactory.createBackToMainKeyboard());
     }
 
-    // ==========================================
-    //          HELPER / SEED UTILITIES
-    // ==========================================
-
     private Player getOrCreatePlayer(Long telegramId, String username, String nickname) {
         return playerRepository.findByTelegramId(telegramId).orElseGet(() -> {
             Player p = Player.builder()
@@ -654,11 +620,10 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
 
             Player saved = playerRepository.save(p);
 
-            // Give starter skills: Great Sage, Predator, Water Blade
             seedStarterSkills(telegramId);
-            // Give starter city
+            
             cityManagementService.getOrCreateCity(telegramId);
-            // Give starter potion
+            
             Item starterPotion = Item.builder()
                     .playerTelegramId(telegramId)
                     .name("Зелье полного восстановления Джуры")
@@ -764,10 +729,6 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
                 .build();
     }
 
-    // ==========================================
-    //           TELEGRAM SENDER HELPERS
-    // ==========================================
-
     private void sendHtml(Long chatId, String text) {
         SendMessage sm = new SendMessage();
         sm.setChatId(chatId);
@@ -803,7 +764,7 @@ public class SlimeTelegramBot extends TelegramLongPollingBot {
         try {
             execute(em);
         } catch (TelegramApiException e) {
-            // If text unchanged or message too old, fallback to sending new message
+            
             sendHtmlWithKeyboard(chatId, text, markup);
         }
     }

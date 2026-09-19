@@ -37,9 +37,6 @@ public class CityManagementService {
         public String message;
     }
 
-    /**
-     * Get or initialize Tempest City for player.
-     */
     @Transactional
     public BunkerCity getOrCreateCity(Long telegramId) {
         return cityRepository.findByPlayerTelegramId(telegramId).orElseGet(() -> {
@@ -66,9 +63,6 @@ public class CityManagementService {
         });
     }
 
-    /**
-     * Harvest accrued passive resources.
-     */
     @Transactional
     public String collectResources(Long telegramId) {
         BunkerCity city = getOrCreateCity(telegramId);
@@ -87,7 +81,6 @@ public class CityManagementService {
         long diffWater = city.getMagicWater() - prevWater;
         long diffStellas = city.getUncollectedStellas() - prevStellas;
 
-        // Transfer collected stellas to player wallet
         if (city.getUncollectedStellas() > 0) {
             player.setStellas(player.getStellas() + city.getUncollectedStellas());
             city.setUncollectedStellas(0L);
@@ -113,9 +106,6 @@ public class CityManagementService {
         );
     }
 
-    /**
-     * Upgrades a specific building in Tempest.
-     */
     @Transactional
     public CityUpgradeResult upgradeBuilding(Long telegramId, String buildingType) {
         BunkerCity city = getOrCreateCity(telegramId);
@@ -140,7 +130,6 @@ public class CityManagementService {
             return res;
         }
 
-        // Deduct resources
         player.setStellas(player.getStellas() - reqStellas);
         city.setJuraTimber(city.getJuraTimber() - reqTimber);
         city.setMagicOre(city.getMagicOre() - reqOre);
@@ -187,9 +176,6 @@ public class CityManagementService {
         return res;
     }
 
-    /**
-     * Crafts equipment in Kurobe's Forge.
-     */
     @Transactional
     public CraftingResult craftEquipment(Long telegramId, String itemName) {
         BunkerCity city = getOrCreateCity(telegramId);
@@ -240,9 +226,6 @@ public class CityManagementService {
         return res;
     }
 
-    /**
-     * Brews Full Healing Potions in Bester's Lab using Magic Water.
-     */
     @Transactional
     public CraftingResult brewFullPotion(Long telegramId, int count) {
         BunkerCity city = getOrCreateCity(telegramId);
@@ -260,7 +243,6 @@ public class CityManagementService {
         city.setHealingPotions(city.getHealingPotions() + count);
         cityRepository.save(city);
 
-        // Also add to inventory as usable Item
         Optional<Item> potionInvOpt = itemRepository.findByNameAndPlayerTelegramId("Зелье полного восстановления Джуры", telegramId);
         if (potionInvOpt.isPresent()) {
             Item potion = potionInvOpt.get();

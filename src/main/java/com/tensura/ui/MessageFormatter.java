@@ -8,9 +8,6 @@ import java.util.List;
 @Component
 public class MessageFormatter {
 
-    /**
-     * Builds an aesthetic unicode progress bar, e.g. [▰▰▰▰▰▱▱▱▱▱]
-     */
     public static String renderProgressBar(long current, long max, int length) {
         if (max <= 0) return "▱".repeat(Math.max(1, length));
         double fraction = Math.max(0.0, Math.min(1.0, (double) current / max));
@@ -19,9 +16,6 @@ public class MessageFormatter {
         return "▰".repeat(Math.max(0, filled)) + "▱".repeat(Math.max(0, empty));
     }
 
-    /**
-     * Stood-out Player Profile card.
-     */
     public String formatProfile(Player player, List<Item> equippedItems, int subordinatesCount) {
         String hpBar = renderProgressBar(player.getHp(), player.getMaxHp(), 10);
         String mpBar = renderProgressBar(player.getMp(), player.getMaxMp(), 10);
@@ -76,9 +70,6 @@ public class MessageFormatter {
         return sb.toString();
     }
 
-    /**
-     * Stood-out Tempest City overview card.
-     */
     public String formatCity(BunkerCity city, long playerStellas) {
         StringBuilder sb = new StringBuilder();
         sb.append("╔═══════════════════════════╗\n");
@@ -108,9 +99,6 @@ public class MessageFormatter {
         return sb.toString();
     }
 
-    /**
-     * Stood-out Battle Screen card.
-     */
     public String formatBattleScreen(BattleSession session, Player player) {
         String monsterHpBar = renderProgressBar(session.getMonsterHp(), session.getMonsterMaxHp(), 10);
         String playerHpBar = renderProgressBar(player.getHp(), player.getMaxHp(), 10);
@@ -146,9 +134,6 @@ public class MessageFormatter {
         return sb.toString();
     }
 
-    /**
-     * Format Subordinates Baracks.
-     */
     public String formatSubordinatesList(List<Subordinate> subordinates) {
         StringBuilder sb = new StringBuilder();
         sb.append("╔═══════════════════════════╗\n");
@@ -173,9 +158,6 @@ public class MessageFormatter {
         return sb.toString();
     }
 
-    /**
-     * Format Skills Grimoire.
-     */
     public String formatSkillsGrimoire(List<PlayerSkill> skills) {
         StringBuilder sb = new StringBuilder();
         sb.append("╔═══════════════════════════╗\n");
@@ -198,9 +180,6 @@ public class MessageFormatter {
         return sb.toString();
     }
 
-    /**
-     * Format Inventory backpack.
-     */
     public String formatInventory(List<Item> items) {
         StringBuilder sb = new StringBuilder();
         sb.append("╔═══════════════════════════╗\n");

@@ -26,9 +26,6 @@ public class CasinoMiniGamesService {
         public String details;
     }
 
-    /**
-     * Rimuru Goblin Dice: Player rolls 2d6 vs Gobuta.
-     */
     @Transactional
     public CasinoGameResult playGoblinDice(Player player, long bet) {
         log.info("Player [{}] playing Goblin Dice with bet [{}]", player.getTelegramId(), bet);
@@ -82,10 +79,6 @@ public class CasinoMiniGamesService {
         return res;
     }
 
-    /**
-     * Tempest Magic Roulette:
-     * betType: "RED" (Ифрит x2), "BLACK" (Вельдора x2), "GREEN" (Рамирис x14), "EVEN" (x2), "ODD" (x2)
-     */
     @Transactional
     public CasinoGameResult playTempestRoulette(Player player, long bet, String betType) {
         log.info("Player [{}] playing Tempest Roulette with bet [{}], type [{}]", player.getTelegramId(), bet, betType);
@@ -102,15 +95,14 @@ public class CasinoMiniGamesService {
 
         player.setStellas(player.getStellas() - bet);
 
-        // 0 to 36
         int spinNumber = random.nextInt(37);
         String spinColor;
         if (spinNumber == 0) {
-            spinColor = "GREEN"; // Рамирис
+            spinColor = "GREEN"; 
         } else if (spinNumber % 2 == 1) {
-            spinColor = "RED"; // Ифрит
+            spinColor = "RED"; 
         } else {
-            spinColor = "BLACK"; // Вельдора
+            spinColor = "BLACK"; 
         }
 
         boolean won = false;
@@ -178,9 +170,6 @@ public class CasinoMiniGamesService {
         return res;
     }
 
-    /**
-     * Slime Card Duel: Card values 2..14 (Ace high).
-     */
     @Transactional
     public CasinoGameResult playCardDuel(Player player, long bet) {
         CasinoGameResult res = new CasinoGameResult();

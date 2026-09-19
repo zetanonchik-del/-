@@ -40,9 +40,6 @@ public class NamingService {
         public String message;
     }
 
-    /**
-     * Available subordinate candidates ready for naming in Tempest.
-     */
     public List<NamingCandidate> getAvailableCandidates() {
         NamingCandidate c1 = new NamingCandidate();
         c1.baseSpecies = "Гоблин (Goblin)";
@@ -79,9 +76,6 @@ public class NamingService {
         return List.of(c1, c2, c3, c4);
     }
 
-    /**
-     * Bestows a Name upon a monster, triggering evolutionary mutation and soul bond.
-     */
     @Transactional
     public NamingResult bestowName(Player player, String baseSpecies, String customName) {
         log.info("Player [{}] naming monster species [{}] as [{}]", player.getTelegramId(), baseSpecies, customName);
@@ -107,10 +101,8 @@ public class NamingService {
             return result;
         }
 
-        // Consume MP
         player.setMp(player.getMp() - candidate.requiredMp);
 
-        // Check coma risk if remaining MP is under 20%
         double remainingRatio = (double) player.getMp() / Math.max(1, player.getMaxMp());
         boolean wentToComa = false;
         int comaMin = 0;
@@ -123,7 +115,6 @@ public class NamingService {
             log.warn("Player [{}] entered magicule coma for [{}] minutes after naming", player.getTelegramId(), comaMin);
         }
 
-        // Create Subordinate entity
         Subordinate subordinate = Subordinate.builder()
                 .masterTelegramId(player.getTelegramId())
                 .customName(customName.trim())

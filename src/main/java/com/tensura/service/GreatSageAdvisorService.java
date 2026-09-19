@@ -19,9 +19,6 @@ public class GreatSageAdvisorService {
     private final PlayerSkillRepository playerSkillRepository;
     private final Random random = new Random();
 
-    /**
-     * Iconic voice of Great Sage / Raphael giving advice and battle assessment.
-     */
     public String analyzeMonsterForBattle(Player player, Monster monster) {
         log.info("Great Sage analyzing monster [{}] for player [{}]", monster.getName(), player.getTelegramId());
 
@@ -39,10 +36,8 @@ public class GreatSageAdvisorService {
         report.append("🔹 <b>Боевая мощь противника:</b> ").append(String.format("%,.0f", monsterPower)).append("\n");
         report.append("🔹 <b>Ваша боевая мощь:</b> ").append(String.format("%,.0f", playerPower)).append("\n\n");
 
-        // Victory estimation
         report.append("📊 <b>Расчетная вероятность победы:</b> <b>").append(String.format("%.1f", winChance)).append("%</b>\n\n");
 
-        // Weakness & Resistances
         if (monster.getElementalWeakness() != null) {
             report.append("⚠️ <b>Уязвимость:</b> <code>").append(monster.getElementalWeakness()).append("</code> (Урон повышен на +50%)\n");
         }
@@ -50,13 +45,11 @@ public class GreatSageAdvisorService {
             report.append("🛡️ <b>Сопротивление:</b> <code>").append(monster.getElementalResistance()).append("</code> (Снижение урона на 40%)\n");
         }
 
-        // Extractable Skill
         if (monster.getExtractableSkillName() != null) {
             report.append("🌀 <b>Потенциал «Хищника»:</b> При поглощении доступен навык <code>")
                     .append(monster.getExtractableSkillName()).append("</code>\n");
         }
 
-        // Tactical Guidance
         report.append("\n💡 <b>Тактические рекомендации Рафаэль:</b>\n");
         if (winChance >= 80.0) {
             report.append("• <i>«Противник значительно уступает в плотности магикул. Рекомендуется быстрая атака с последующим поглощением навыком «Хищник».»</i>");
@@ -71,9 +64,6 @@ public class GreatSageAdvisorService {
         return report.toString();
     }
 
-    /**
-     * Analysis of synthesis in Forge or Alchemy Lab.
-     */
     public String analyzeCraftingRecipe(Player player, String recipeName, int forgeLevel, long ore, long timber) {
         log.info("Great Sage analyzing crafting recipe [{}] for player [{}]", recipeName, player.getTelegramId());
 
@@ -95,9 +85,6 @@ public class GreatSageAdvisorService {
         return sb.toString();
     }
 
-    /**
-     * General advisory prompt on current player state.
-     */
     public String getGeneralStatusAdvice(Player player) {
         StringBuilder advice = new StringBuilder();
         advice.append("🔮 <b>«ВЕЛИКИЙ МУДРЕЦ» — ДИАГНОСТИКА СУЩНОСТИ</b>\n");
@@ -132,8 +119,6 @@ public class GreatSageAdvisorService {
         return advice.toString();
     }
 
-    // --- Math Calculations ---
-
     public double calculateCombatPower(Player player) {
         return (player.getAttack() * 3.0) +
                 (player.getDefense() * 2.2) +
@@ -156,7 +141,6 @@ public class GreatSageAdvisorService {
         if (playerPower <= 0) return 1.0;
         double baseRatio = playerPower / (playerPower + monsterPower);
 
-        // Adjust for current HP and MP condition
         double healthFactor = (double) currentHp / Math.max(1, maxHp);
         double magiculeFactor = Math.min(1.0, (double) currentMp / 200.0);
 

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class GameBalanceConfig {
 
-    // --- Base Player Stats ---
     public static final int BASE_SLIME_HP = 120;
     public static final int BASE_SLIME_MP = 250;
     public static final int BASE_SLIME_ATK = 18;
@@ -15,11 +14,9 @@ public class GameBalanceConfig {
     public static final int BASE_MAX_STAMINA = 100;
     public static final int STAMINA_RECOVERY_MINUTES = 3;
 
-    // --- Currencies & Economy ---
     public static final long STARTING_STELLAS = 500L;
     public static final long STARTING_CRYSTALS = 10L;
 
-    // --- Level Progression ---
     public static final double EXP_SCALING_EXPONENT = 1.35;
     public static final int BASE_EXP_REQUIREMENT = 100;
 
@@ -28,7 +25,6 @@ public class GameBalanceConfig {
         return (long) (BASE_EXP_REQUIREMENT * Math.pow(level, EXP_SCALING_EXPONENT) + (level * 50L));
     }
 
-    // --- Battle Formulas ---
     public static final double BASE_CRIT_CHANCE = 0.05;
     public static final double BASE_CRIT_MULTIPLIER = 1.5;
     public static final double BASE_EVASION_CHANCE = 0.04;
@@ -53,13 +49,12 @@ public class GameBalanceConfig {
         if (isCrit) {
             netDamage *= BASE_CRIT_MULTIPLIER;
         }
-        // Small variance: 95% - 105%
+        
         double variance = 0.95 + (Math.random() * 0.10);
         int finalDamage = (int) Math.round(netDamage * variance);
         return Math.max(1, finalDamage);
     }
 
-    // --- Evolution Requirements ---
     public static final int EVOLUTION_INTELLIGENT_SLIME_LEVEL = 20;
     public static final int EVOLUTION_INTELLIGENT_SLIME_MP = 2000;
     public static final long EVOLUTION_INTELLIGENT_SLIME_STELLAS = 5000L;
@@ -76,25 +71,21 @@ public class GameBalanceConfig {
     public static final int EVOLUTION_DRAGONOID_MP = 200000;
     public static final long EVOLUTION_DRAGON_FACTOR_CRYSTALS = 500L;
 
-    // --- Naming System (Naming subordinates) ---
     public static final int NAMING_GOBLIN_COST_MP = 300;
     public static final int NAMING_ORC_COST_MP = 750;
     public static final int NAMING_LIZARDMAN_COST_MP = 1200;
     public static final int NAMING_OGRE_COST_MP = 3500;
     public static final int NAMING_DRAGON_KIN_COST_MP = 15000;
-    public static final double NAMING_MAGICULE_DRAIN_RISK = 0.35; // chance to enter sleep/exhaustion if MP < 50%
+    public static final double NAMING_MAGICULE_DRAIN_RISK = 0.35; 
 
-    // --- Tempest City Production ---
     public static final int BASE_TIMBER_PER_HOUR = 15;
     public static final int BASE_ORE_PER_HOUR = 8;
     public static final int BASE_STELLAS_PER_HOUR = 50;
     public static final int BASE_MAGIC_WATER_PER_HOUR = 5;
 
-    // --- Labyrinth of Ramiris ---
     public static final int LABYRINTH_MAX_FLOORS = 100;
     public static final int LABYRINTH_CHECKPOINT_INTERVAL = 10;
 
-    // --- Predator Devour Rates ---
     public static final double BASE_DEVOUR_SKILL_CHANCE = 0.28;
     public static final double DEVOUR_STAT_BONUS_FRACTION = 0.04;
 }

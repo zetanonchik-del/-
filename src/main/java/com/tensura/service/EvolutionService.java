@@ -36,14 +36,11 @@ public class EvolutionService {
         public String storyNarrative;
     }
 
-    /**
-     * Checks requirements and prepares evolution summary.
-     */
     public EvolutionCheckResult checkEvolutionEligibility(Player player) {
         EvolutionCheckResult res = new EvolutionCheckResult();
 
         switch (player.getEvolutionStage()) {
-            case 1 -> { // Slime -> Intelligent Slime
+            case 1 -> { 
                 res.nextFormName = "Разумная Слизь (Intelligent Slime)";
                 boolean reqLvl = player.getLevel() >= GameBalanceConfig.EVOLUTION_INTELLIGENT_SLIME_LEVEL;
                 boolean reqMp = player.getMaxMp() >= GameBalanceConfig.EVOLUTION_INTELLIGENT_SLIME_MP;
@@ -58,7 +55,7 @@ public class EvolutionService {
                 );
                 res.benefitsText = "• Ранг повышается до C\n• Бонус характеристик: +40% к HP/MP/Атаке\n• Получение человекоподобной формы (Мимикрия)";
             }
-            case 2 -> { // Intelligent Slime -> Demon Slime
+            case 2 -> { 
                 res.nextFormName = "Демоническая Слизь (Demon Slime)";
                 boolean reqLvl = player.getLevel() >= GameBalanceConfig.EVOLUTION_DEMON_SLIME_LEVEL;
                 boolean reqMp = player.getMaxMp() >= GameBalanceConfig.EVOLUTION_DEMON_SLIME_MP;
@@ -73,7 +70,7 @@ public class EvolutionService {
                 );
                 res.benefitsText = "• Ранг повышается до Special A (Бедствие)\n• Бонус характеристик: +70% ко всем атрибутам\n• Пробуждение способности «Хаотическое пожирание»";
             }
-            case 3 -> { // Demon Slime -> True Demon Lord
+            case 3 -> { 
                 res.nextFormName = "Истинный Лорд Демонов (True Demon Lord)";
                 boolean reqLvl = player.getLevel() >= GameBalanceConfig.EVOLUTION_TRUE_DEMON_LORD_LEVEL;
                 boolean reqMp = player.getMaxMp() >= GameBalanceConfig.EVOLUTION_TRUE_DEMON_LORD_MP;
@@ -99,9 +96,6 @@ public class EvolutionService {
         return res;
     }
 
-    /**
-     * Executes evolution transition.
-     */
     @Transactional
     public EvolutionExecutionResult performEvolution(Player player) {
         log.info("Attempting evolution for player [{}] stage [{}]", player.getTelegramId(), player.getEvolutionStage());
@@ -118,13 +112,12 @@ public class EvolutionService {
         }
 
         switch (player.getEvolutionStage()) {
-            case 1 -> { // To Intelligent Slime
+            case 1 -> { 
                 player.setRace("Разумная Слизь (Intelligent Slime)");
                 player.setRank("C (Магический зверь)");
                 player.setEvolutionStage(2);
                 player.setActiveTitle("Хранитель Великого Леса Джура");
 
-                // Stat Boosts
                 player.setMaxHp((int) (player.getMaxHp() * 1.45));
                 player.setMaxMp((int) (player.getMaxMp() * 1.50));
                 player.setAttack((int) (player.getAttack() * 1.40));
@@ -139,7 +132,7 @@ public class EvolutionService {
                 res.success = true;
                 res.storyNarrative = buildStage1Narrative();
             }
-            case 2 -> { // To Demon Slime
+            case 2 -> { 
                 player.setRace("Демоническая Слизь (Demon Slime)");
                 player.setRank("Special A (Бедствие Джуры)");
                 player.setEvolutionStage(3);
@@ -157,7 +150,7 @@ public class EvolutionService {
                 res.success = true;
                 res.storyNarrative = buildStage2Narrative();
             }
-            case 3 -> { // To True Demon Lord (Harvest Festival)
+            case 3 -> { 
                 player.setRace("Истинный Лорд Демонов (True Demon Lord)");
                 player.setRank("S (Катастрофа Октаграммы)");
                 player.setEvolutionStage(4);
@@ -170,7 +163,6 @@ public class EvolutionService {
                 player.setIntelligence((int) (player.getIntelligence() * 2.50));
                 player.restoreFullHealth();
 
-                // Evolve Skills
                 evolveSkillsToUltimate(player.getTelegramId());
 
                 res.newRace = player.getRace();
@@ -190,7 +182,7 @@ public class EvolutionService {
     }
 
     private void evolveSkillsToUltimate(Long telegramId) {
-        // Upgrade Great Sage to Raphael
+        
         Optional<PlayerSkill> sageOpt = playerSkillRepository.findByPlayerTelegramIdAndSkillName(telegramId, "Великий Мудрец");
         if (sageOpt.isPresent()) {
             PlayerSkill sage = sageOpt.get();
@@ -201,7 +193,6 @@ public class EvolutionService {
             playerSkillRepository.save(sage);
         }
 
-        // Upgrade Predator to Beelzebuth
         Optional<PlayerSkill> predOpt = playerSkillRepository.findByPlayerTelegramIdAndSkillName(telegramId, "Хищник");
         if (predOpt.isPresent()) {
             PlayerSkill pred = predOpt.get();

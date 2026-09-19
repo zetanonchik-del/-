@@ -40,7 +40,7 @@ public class PlayerSkill {
     private double powerMultiplier;
 
     @Column(nullable = false)
-    private String effectType; // DAMAGE, HEAL, SHIELD, DEVOUR, ANALYZE
+    private String effectType; 
 
     @Column(nullable = false)
     @Builder.Default

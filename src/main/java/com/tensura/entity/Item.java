@@ -16,22 +16,20 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // If null, it is a global catalog template; if set, it belongs to that player's inventory
     private Long playerTelegramId;
 
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
-    private String itemType; // WEAPON, ARMOR, ACCESSORY, POTION, MATERIAL, SOUL_CORE
+    private String itemType; 
 
     @Column(nullable = false)
-    private String rarity; // COMMON, UNCOMMON, RARE, EPIC, LEGENDARY, MYTHIC, GENESIS
+    private String rarity; 
 
     @Column(length = 1000, nullable = false)
     private String description;
 
-    // --- Stat Bonuses ---
     @Column(nullable = false)
     @Builder.Default
     private int attackBonus = 0;
@@ -52,14 +50,12 @@ public class Item {
     @Builder.Default
     private int agiBonus = 0;
 
-    // --- Economy ---
     @Column(nullable = false)
     private long priceStellas;
 
     @Column(nullable = false)
     private long priceCrystals;
 
-    // --- Quantity & Flags ---
     @Column(nullable = false)
     @Builder.Default
     private int quantity = 1;
@@ -76,12 +72,10 @@ public class Item {
     @Builder.Default
     private boolean equipped = false;
 
-    // --- Forge level requirement ---
     @Column(nullable = false)
     @Builder.Default
     private int requiredForgeLevel = 1;
 
-    // --- Crafting Recipe Components ---
     private int requiredOre;
     private int requiredTimber;
     private int requiredWater;

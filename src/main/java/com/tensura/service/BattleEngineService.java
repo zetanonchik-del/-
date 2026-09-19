@@ -33,14 +33,10 @@ public class BattleEngineService {
         public PredatorService.DevourResult devourResult;
     }
 
-    /**
-     * Start a new battle session with a monster.
-     */
     @Transactional
     public BattleSession startBattle(Player player, Monster monster, String battleType, int labyrinthFloor) {
         log.info("Starting battle for player [{}] vs [{}] in [{}]", player.getTelegramId(), monster.getName(), battleType);
 
-        // Delete any stale existing session
         battleSessionRepository.deleteByPlayerTelegramId(player.getTelegramId());
 
         player.setInBattle(true);
@@ -78,9 +74,6 @@ public class BattleEngineService {
         return battleSessionRepository.save(session);
     }
 
-    /**
-     * Executes regular physical attack.
-     */
     @Transactional
     public TurnResult executePlayerAttack(Long telegramId) {
         Player player = getPlayer(telegramId);
@@ -93,7 +86,6 @@ public class BattleEngineService {
         StringBuilder logBuilder = new StringBuilder();
         logBuilder.append("<b>[Раунд ").append(session.getRound()).append("]</b>\n");
 
-        // 1. Player attack roll
         double evasionChance = GameBalanceConfig.calculateEvasionRate(session.getMonsterAgility(), player.getAgility());
         boolean monsterEvaded = random.nextDouble() < evasionChance;
 
@@ -113,20 +105,16 @@ public class BattleEngineService {
             }
         }
 
-        // Check if monster died
         if (session.getMonsterHp() <= 0) {
             return handleVictory(player, session, logBuilder);
         }
 
-        // 2. Monster Counter-attack
         executeMonsterTurn(player, session, logBuilder);
 
-        // Check if player died
         if (player.getHp() <= 0) {
             return handleDefeat(player, session, logBuilder);
         }
 
-        // Advance round
         session.setRound(session.getRound() + 1);
         session.setCombatLog(logBuilder.toString());
         session.setUpdatedAt(LocalDateTime.now());
@@ -140,9 +128,6 @@ public class BattleEngineService {
         return result;
     }
 
-    /**
-     * Executes a skill cast by player.
-     */
     @Transactional
     public TurnResult executePlayerSkill(Long telegramId, Long skillId) {
         Player player = getPlayer(telegramId);
@@ -154,7 +139,7 @@ public class BattleEngineService {
 
         Optional<PlayerSkill> playerSkillOpt = playerSkillRepository.findById(skillId);
         if (playerSkillOpt.isEmpty()) {
-            // Fallback to basic attack if skill not found
+            
             return executePlayerAttack(telegramId);
         }
 
@@ -169,12 +154,10 @@ public class BattleEngineService {
             return executePlayerAttack(telegramId);
         }
 
-        // Consume MP
         player.consumeMp(skill.getMpCost());
         skill.addMasteryExp(1);
         playerSkillRepository.save(skill);
 
-        // Process effect
         switch (skill.getEffectType().toUpperCase()) {
             case "DAMAGE" -> {
                 double critChance = GameBalanceConfig.calculateCritRate(player.getAgility(), player.getIntelligence());
@@ -206,15 +189,12 @@ public class BattleEngineService {
             }
         }
 
-        // Check if monster died
         if (session.getMonsterHp() <= 0) {
             return handleVictory(player, session, logBuilder);
         }
 
-        // Monster Counter-attack
         executeMonsterTurn(player, session, logBuilder);
 
-        // Check if player died
         if (player.getHp() <= 0) {
             return handleDefeat(player, session, logBuilder);
         }
@@ -232,9 +212,6 @@ public class BattleEngineService {
         return result;
     }
 
-    /**
-     * Uses Healing Potion in battle.
-     */
     @Transactional
     public TurnResult executeUsePotion(Long telegramId) {
         Player player = getPlayer(telegramId);
@@ -271,7 +248,6 @@ public class BattleEngineService {
                     .append("Восстановлено: <b>+").append(healHp).append(" HP</b> и <b>+").append(healMp).append(" MP</b>!\n");
         }
 
-        // Monster hits player
         executeMonsterTurn(player, session, logBuilder);
 
         if (player.getHp() <= 0) {
@@ -291,9 +267,6 @@ public class BattleEngineService {
         return result;
     }
 
-    /**
-     * Executes Predator devour directly in battle if monster HP < 30% or defeated.
-     */
     @Transactional
     public TurnResult executeBattleDevour(Long telegramId) {
         Player player = getPlayer(telegramId);
@@ -323,7 +296,6 @@ public class BattleEngineService {
             return r;
         }
 
-        // Successfully devour weakened or dying monster!
         logBuilder.append("🌀 <b>ВЫ АКТИВИРУЕТЕ «ХИЩНИК» (PREDATOR)!</b>\n")
                 .append("Гигантская темная пасть слизи окутывает противника и поглощает его целиком!\n\n");
 
@@ -331,9 +303,6 @@ public class BattleEngineService {
         return handleVictory(player, session, logBuilder, true);
     }
 
-    /**
-     * Attempt to flee battle.
-     */
     @Transactional
     public TurnResult executeFlee(Long telegramId) {
         Player player = getPlayer(telegramId);
@@ -393,7 +362,6 @@ public class BattleEngineService {
         boolean isCrit = random.nextDouble() < critChance;
         int rawDmg = GameBalanceConfig.calculateDamage(session.getMonsterAttack(), player.getDefense(), 1.0, isCrit);
 
-        // Check active barrier shield
         if (session.getBarrierShield() > 0) {
             if (session.getBarrierShield() >= rawDmg) {
                 session.setBarrierShield(session.getBarrierShield() - rawDmg);
@@ -427,7 +395,6 @@ public class BattleEngineService {
         session.setPlayerWon(true);
         player.setInBattle(false);
 
-        // Give EXP & Stellas
         long exp = session.getExpReward();
         long stellas = session.getStellasReward();
         player.gainExp(exp);
@@ -437,7 +404,6 @@ public class BattleEngineService {
                 .append("• Получено опыта: <b>+").append(exp).append(" EXP</b>\n")
                 .append("• Награда: <b>+").append(stellas).append(" Стелл</b>\n");
 
-        // If in Labyrinth, update floor
         if (session.getBattleType().equals("LABYRINTH")) {
             int cur = session.getLabyrinthFloor();
             player.setCurrentLabyrinthFloor(cur + 1);
@@ -447,7 +413,6 @@ public class BattleEngineService {
             logBuilder.append("🚪 <i>Путь на этаж [").append(cur + 1).append("] открыт!</i>\n");
         }
 
-        // Automatic Predator devour trigger
         Monster snapshot = Monster.builder()
                 .name(session.getMonsterName())
                 .species(session.getMonsterSpecies())
@@ -483,7 +448,6 @@ public class BattleEngineService {
         session.setPlayerWon(false);
         player.setInBattle(false);
 
-        // Resurrect with 20% HP in Tempest Clinic
         player.setHp((int) Math.max(10, player.getMaxHp() * 0.20));
         player.setMp((int) Math.max(20, player.getMaxMp() * 0.20));
 

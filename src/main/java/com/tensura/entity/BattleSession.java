@@ -21,7 +21,6 @@ public class BattleSession {
     @Column(nullable = false, unique = true)
     private Long playerTelegramId;
 
-    // --- Monster Snapshot ---
     @Column(nullable = false)
     private String monsterName;
 
@@ -56,18 +55,17 @@ public class BattleSession {
     private double dropRate;
     private String extractableSkill;
 
-    // --- Battle State ---
     @Column(nullable = false)
     @Builder.Default
     private int round = 1;
 
     @Column(nullable = false)
     @Builder.Default
-    private int barrierShield = 0; // Distortion Barrier absorbed damage pool
+    private int barrierShield = 0; 
 
     @Column(nullable = false)
     @Builder.Default
-    private String battleType = "WILDERNESS"; // WILDERNESS, LABYRINTH, RAID, ARENA
+    private String battleType = "WILDERNESS"; 
 
     @Column(nullable = false)
     @Builder.Default

@@ -15,11 +15,9 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
 
     boolean existsByTelegramId(Long telegramId);
 
-    // Top leaderboard by Level & Combat Power
     @Query("SELECT p FROM Player p ORDER BY p.level DESC, p.attack DESC, p.maxHp DESC")
     List<Player> findTopLeaderboard();
 
-    // Top labyrinth conquerors
     @Query("SELECT p FROM Player p ORDER BY p.highestLabyrinthFloor DESC, p.level DESC")
     List<Player> findTopLabyrinthRankings();
 }

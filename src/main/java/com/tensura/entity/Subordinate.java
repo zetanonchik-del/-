@@ -22,16 +22,16 @@ public class Subordinate {
     private Long masterTelegramId;
 
     @Column(nullable = false)
-    private String customName; // Given name (e.g., Ригурд, Бенимару, Шион, Соуэй, Габил)
+    private String customName; 
 
     @Column(nullable = false)
-    private String baseSpecies; // Гоблин, Людоящер, Огр, Драконид
+    private String baseSpecies; 
 
     @Column(nullable = false)
-    private String evolvedSpecies; // Хофгоблин, Киджин, Они, Драконий Всадник
+    private String evolvedSpecies; 
 
     @Column(nullable = false)
-    private String rank; // D, C, B, A, Special A, Hazard, Disaster
+    private String rank; 
 
     @Column(nullable = false)
     @Builder.Default
@@ -42,15 +42,14 @@ public class Subordinate {
 
     @Column(nullable = false)
     @Builder.Default
-    private int loyalty = 100; // 0 to 100%
+    private int loyalty = 100; 
 
     @Column(nullable = false)
-    private int magiculesInvested; // Amount of player's magicules consumed to name
+    private int magiculesInvested; 
 
-    // Assigned duty in Tempest Federation
     @Column(nullable = false)
     @Builder.Default
-    private String assignedDuty = "GUARD"; // GUARD, BLACKSMITH_HELPER, LAB_ASSISTANT, PATROL, CASINO_DEALER
+    private String assignedDuty = "GUARD"; 
 
     @Column(nullable = false)
     @Builder.Default

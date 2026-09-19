@@ -308,7 +308,6 @@ body {
   transform: scale(0.92);
 }
 
-/* Tooltip arrow for rotate button */
 .video-rotate-btn::before {
   content: "";
   position: absolute;
@@ -324,7 +323,6 @@ body {
   z-index: 2147483648;
 }
 
-/* Tooltip bubble with translated text */
 .video-rotate-btn::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -373,7 +371,6 @@ body {
   pointer-events: none !important;
 }
 
-/* Быстрая перемотка в стиле YouTube: +5, +10, +15... */
 .video-seek-overlay {
   position: absolute;
   top: 0;
@@ -457,7 +454,6 @@ body {
   opacity: 0.9;
 }
 
-/* Индикатор переворота по центру */
 .video-tap-feedback.feedback-center {
   position: absolute;
   top: 50%;
@@ -712,7 +708,6 @@ video {
   flex-direction: column;
 }
 
-/* Files List Container */
 .files-list-container {
   display: flex;
   flex-direction: column;
@@ -1003,7 +998,6 @@ video {
   border: 1px solid rgba(255, 255, 255, 0.14);
 }
 
-/* Просмотр файла (PDF, DOCX, Картинки, Код) прямо внутри Mini App */
 .file-viewer-modal {
   position: fixed;
   inset: 0;
@@ -1126,7 +1120,6 @@ video {
   to { transform: rotate(360deg); }
 }
 
-/* PDF.js canvas container - STRETCH TO 100% WIDTH on PC and mobile */
 .pdf-viewer-container {
   width: 100%;
   max-width: 100%;
@@ -1147,7 +1140,6 @@ video {
   background: #fff;
 }
 
-/* Word DOCX rendered document container */
 .doc-viewer-container {
   width: 100%;
   max-width: 960px;
@@ -1189,7 +1181,6 @@ video {
   height: auto;
 }
 
-/* Markdown Document Container (.md) */
 .markdown-viewer-container {
   flex: 1;
   width: 100%;
@@ -1318,7 +1309,6 @@ video {
   background: rgba(255, 255, 255, 0.02);
 }
 
-/* Image container */
 .image-viewer-container {
   flex: 1;
   display: flex;
@@ -1334,7 +1324,6 @@ video {
   border-radius: 8px;
 }
 
-/* Code / Text container */
 .code-viewer-container {
   flex: 1;
   padding: 16px;
@@ -1359,7 +1348,6 @@ video {
   background: #fff;
 }
 
-/* PPTX controls in header */
 .pptx-controls {
   display: flex;
   align-items: center;
@@ -1378,7 +1366,6 @@ video {
   text-align: center;
 }
 
-/* Copy code button */
 .copy-code-btn {
   background: #1f2029 !important;
   border: 1px solid var(--border-color) !important;
@@ -1387,7 +1374,6 @@ video {
   padding: 4px 8px;
 }
 
-/* PPTX presentation container - FULL WIDTH LIKE PDF */
 .pptx-viewer-container {
   width: 100% !important;
   max-width: 100% !important;
@@ -1400,7 +1386,6 @@ video {
   box-sizing: border-box !important;
 }
 
-/* 16:9 Presentation Canvas (True PowerPoint Experience - Fullscreen/Full-width like PDF) */
 .pptx-slide-canvas {
   width: 100% !important;
   max-width: 100% !important;
@@ -1520,7 +1505,6 @@ video {
   color: #1f2937;
 }
 
-/* Spreadsheet table viewer */
 .sheet-viewer-container {
   width: 100%;
   padding: 16px;
@@ -1560,7 +1544,6 @@ video {
   background: rgba(255, 255, 255, 0.02);
 }
 
-/* Audio player card */
 .audio-viewer-container {
   flex: 1;
   display: flex;
@@ -1607,7 +1590,6 @@ video {
   margin-top: 8px;
 }
 
-/* Universal interactive card container (for PPT, archives, unsupported) */
 .card-viewer-container {
   flex: 1;
   display: flex;
@@ -1662,15 +1644,11 @@ video {
   width: 100%;
 }
 
-/* Скрытая вкладка или контент-блок */
 .tab-item.tab-hidden,
 .content-box.hidden {
   display: none !important;
 }
 
-/* ==========================================================================
-   Access Denied (Big Bold X in Black & White with Beautiful Ambient Background)
-   ========================================================================== */
 .access-denied-screen {
   position: fixed;
   top: 0;

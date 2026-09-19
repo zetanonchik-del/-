@@ -17,45 +17,44 @@ public class Skill {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; // e.g. "Черное пламя (Black Flame)"
+    private String name; 
 
     @Column(nullable = false)
-    private String japaneseName; // e.g. "黒炎 (Kokuen)"
+    private String japaneseName; 
 
     @Column(nullable = false)
-    private String skillType; // INTRINSIC, UNIQUE, ULTIMATE, COMBAT, RESISTANCE
+    private String skillType; 
 
     @Column(length = 1000, nullable = false)
     private String description;
 
     @Column(nullable = false)
-    private int mpCost; // Magicules cost
+    private int mpCost; 
 
     @Column(nullable = false)
     private int cooldownTurns;
 
     @Column(nullable = false)
-    private double powerMultiplier; // Multiplier for attack or effect
+    private double powerMultiplier; 
 
     @Column(nullable = false)
-    private String effectType; // DAMAGE, HEAL, SHIELD, DEVOUR, ANALYZE, BUFF, DEBUFF
+    private String effectType; 
 
     @Column(nullable = false)
-    private int baseValue; // Flat base value
-
-    @Column(nullable = false)
-    @Builder.Default
-    private int masteryLevel = 1; // Level of mastery for player
+    private int baseValue; 
 
     @Column(nullable = false)
     @Builder.Default
-    private int masteryExp = 0; // Usage count towards next level
+    private int masteryLevel = 1; 
 
     @Column(nullable = false)
     @Builder.Default
-    private boolean isUltimate = false; // Ultimate skill indicator
+    private int masteryExp = 0; 
 
-    // --- Dynamic execution helper ---
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isUltimate = false; 
+
     public int calculateEffectivePower(int playerIntelligence, int playerAttack) {
         double statContribution = (playerAttack * 0.4) + (playerIntelligence * 0.6);
         double masteryBonus = 1.0 + (this.masteryLevel * 0.08);

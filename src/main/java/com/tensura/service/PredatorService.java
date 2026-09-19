@@ -36,16 +36,12 @@ public class PredatorService {
         public String formattedReport;
     }
 
-    /**
-     * Executes the «Predator / Gluttony» skill to consume a defeated monster corpse.
-     */
     @Transactional
     public DevourResult devourMonster(Player player, Monster monster) {
         log.info("Executing Predator skill for player [{}] on monster [{}]", player.getTelegramId(), monster.getName());
 
         DevourResult result = new DevourResult();
 
-        // 1. Permanent Stat Assimilation
         int bonusHp = Math.max(1, (int) Math.round(monster.getMaxHp() * GameBalanceConfig.DEVOUR_STAT_BONUS_FRACTION));
         int bonusMp = Math.max(2, (int) Math.round(monster.getMp() * GameBalanceConfig.DEVOUR_STAT_BONUS_FRACTION * 1.5));
         int bonusAtk = Math.max(1, (int) Math.round(monster.getAttack() * GameBalanceConfig.DEVOUR_STAT_BONUS_FRACTION));
@@ -63,12 +59,10 @@ public class PredatorService {
         result.gainedAtk = bonusAtk;
         result.gainedDef = bonusDef;
 
-        // 2. Soul Harvest (Increases with monster rank)
         int soulsGained = calculateSoulsFromMonster(monster);
         player.setCollectedSouls(player.getCollectedSouls() + soulsGained);
         result.gainedSouls = soulsGained;
 
-        // 3. Intrinsic / Unique Skill Extraction
         if (monster.getExtractableSkillName() != null && !monster.getExtractableSkillName().isEmpty()) {
             boolean alreadyHas = playerSkillRepository.existsByPlayerTelegramIdAndSkillName(
                     player.getTelegramId(), monster.getExtractableSkillName());
@@ -76,7 +70,7 @@ public class PredatorService {
             if (!alreadyHas) {
                 double chance = GameBalanceConfig.BASE_DEVOUR_SKILL_CHANCE + (player.getIntelligence() * 0.001);
                 if (random.nextDouble() <= Math.min(0.85, chance)) {
-                    // Extract and create player skill
+                    
                     Optional<Skill> templateOpt = skillRepository.findByName(monster.getExtractableSkillName());
                     Skill template = templateOpt.orElseGet(() -> createFallbackSkill(monster.getExtractableSkillName()));
 
@@ -103,13 +97,11 @@ public class PredatorService {
             }
         }
 
-        // 4. Absorption into Stomach (Materials / Items)
         if (monster.getDroppedItemName() != null && random.nextDouble() <= monster.getDropRate()) {
             addItemToStomach(player.getTelegramId(), monster.getDroppedItemName());
             result.gainedItemName = monster.getDroppedItemName();
         }
 
-        // Also add Magic Ore or Jura Timber directly to city storage
         cityRepository.findByPlayerTelegramId(player.getTelegramId()).ifPresent(city -> {
             city.setMagicOre(city.getMagicOre() + 15);
             city.setJuraTimber(city.getJuraTimber() + 25);
@@ -118,7 +110,6 @@ public class PredatorService {
 
         playerRepository.save(player);
 
-        // 5. Format Great Sage Analysis Message
         result.formattedReport = buildSageDevourReport(monster, result);
         return result;
     }
@@ -135,7 +126,7 @@ public class PredatorService {
                 Item newItem = catalogItem.get().createPlayerCopy(telegramId, 1);
                 itemRepository.save(newItem);
             } else {
-                // Create material drop
+                
                 Item newDrop = Item.builder()
                         .playerTelegramId(telegramId)
                         .name(itemName)

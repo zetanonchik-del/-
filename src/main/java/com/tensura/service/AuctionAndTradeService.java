@@ -37,16 +37,10 @@ public class AuctionAndTradeService {
         public String combatSummary;
     }
 
-    /**
-     * Caravan items currently for sale.
-     */
     public List<Item> getCaravanGoods() {
         return itemRepository.findByPlayerTelegramIdIsNull();
     }
 
-    /**
-     * Purchases an item from the caravan.
-     */
     @Transactional
     public TradeResult buyCaravanItem(Player player, Long itemId) {
         TradeResult res = new TradeResult();
@@ -69,7 +63,6 @@ public class AuctionAndTradeService {
         player.setStellas(player.getStellas() - template.getPriceStellas());
         playerRepository.save(player);
 
-        // Add to inventory
         Optional<Item> ownedOpt = itemRepository.findByNameAndPlayerTelegramId(template.getName(), player.getTelegramId());
         if (ownedOpt.isPresent()) {
             Item owned = ownedOpt.get();
@@ -94,9 +87,6 @@ public class AuctionAndTradeService {
         return res;
     }
 
-    /**
-     * Sells an item from player's inventory to the Caravan.
-     */
     @Transactional
     public TradeResult sellItem(Player player, Long inventoryItemId) {
         TradeResult res = new TradeResult();
@@ -139,9 +129,6 @@ public class AuctionAndTradeService {
         return res;
     }
 
-    /**
-     * Tempest Arena Duel against Champion or player.
-     */
     @Transactional
     public ArenaDuelResult fightArenaDuel(Player player, String championName) {
         log.info("Player [{}] fighting Arena Duel vs [{}]", player.getTelegramId(), championName);

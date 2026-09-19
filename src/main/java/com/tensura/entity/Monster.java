@@ -26,7 +26,7 @@ public class Monster {
     private String species;
 
     @Column(nullable = false)
-    private String rank; // F, E, D, C, B, A, Special A, Disaster, Calamity, Catastrophe
+    private String rank; 
 
     @Column(nullable = false)
     private int level;
@@ -52,7 +52,6 @@ public class Monster {
     @Column(nullable = false)
     private int intelligence;
 
-    // --- Rewards ---
     @Column(nullable = false)
     private long expReward;
 
@@ -62,31 +61,27 @@ public class Monster {
     @Column(nullable = false)
     private long crystalsReward;
 
-    // --- Devour / Predator Rewards ---
     private String extractableSkillName;
     private int extractableAtkBonus;
     private int extractableDefBonus;
     private int extractableHpBonus;
     private int extractableMpBonus;
 
-    // --- Dropped Item Name ---
     private String droppedItemName;
-    private double dropRate; // 0.0 to 1.0
+    private double dropRate; 
 
-    // --- Combat Flags ---
     @Builder.Default
     private boolean isBoss = false;
 
     @Builder.Default
     private boolean isRaidTarget = false;
 
-    private String elementalWeakness; // FIRE, WATER, HOLY, DARK, PHYSICAL
-    private String elementalResistance; // FIRE, WATER, etc.
+    private String elementalWeakness; 
+    private String elementalResistance; 
 
     @Column(length = 1000)
     private String description;
 
-    // --- Instantiation factory for dynamic combat copy ---
     public Monster createCombatInstance(int levelMultiplier) {
         double mult = 1.0 + (levelMultiplier * 0.12);
         int scaledHp = (int) Math.round(this.maxHp * mult);

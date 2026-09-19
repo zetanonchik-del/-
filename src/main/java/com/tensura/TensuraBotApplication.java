@@ -47,7 +47,7 @@ public class TensuraBotApplication implements CommandLineRunner {
     }
 
     private void seedWorldTemplates() {
-        // 1. Seed Skills Catalog
+        
         if (skillRepository.count() == 0) {
             Skill sage = Skill.builder()
                     .name("Великий Мудрец")
@@ -125,7 +125,6 @@ public class TensuraBotApplication implements CommandLineRunner {
             log.info("Seeded [{}] skills", skillRepository.count());
         }
 
-        // 2. Seed Items Catalog (Forge & Caravan Goods)
         if (itemRepository.findByPlayerTelegramIdIsNull().isEmpty()) {
             Item sword1 = Item.builder()
                     .name("Меч из Магической Стали Куробе")

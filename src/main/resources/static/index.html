@@ -112,7 +112,7 @@
   </style>
 </head>
 <body>
-  <!-- Access Denied Screen: Big bold X in black & white, beautiful dark ambient background, zero words -->
+  
   <div id="accessDeniedScreen" class="access-denied-screen">
     <div class="access-denied-backdrop"></div>
     <div class="access-denied-glow"></div>
@@ -125,7 +125,7 @@
   </div>
 
   <div class="app-container">
-    <!-- Селекторы модуля и урока -->
+    
     <header class="controls-header">
       <div class="selector-row">
         <div class="dropdown-wrapper month-box" id="monthDropdownWrapper">
@@ -147,7 +147,6 @@
         </div>
       </div>
 
-      <!-- Живой поиск -->
       <div class="search-wrapper">
         <svg class="search-icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8b949e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="11" cy="11" r="8"></circle>
@@ -159,13 +158,12 @@
       <div id="searchResults" class="search-dropdown" style="display: none;"></div>
     </header>
 
-    <!-- Плеер видео -->
     <section class="player-section">
       <div class="video-container" id="videoContainer">
         <video id="videoPlayer" controls playsinline controlsList="nodownload" preload="metadata"></video>
-        <!-- Прозрачный слой для перехвата кликов и двойных кликов перемотки (защита от нативного fullscreen на ПК) -->
+        
         <div class="video-gesture-layer" id="videoGestureLayer"></div>
-        <!-- Быстрая перемотка YouTube: +5, +10, +15... -->
+        
         <div class="video-seek-overlay seek-left" id="seekOverlayLeft" style="display:none;">
           <div class="seek-ripple"></div>
           <div class="seek-badge">
@@ -191,7 +189,6 @@
           </div>
         </div>
 
-        <!-- Кнопка поворота экрана: чистый стильный векторный SVG вместо эмодзи -->
         <button id="rotateVideoBtn" class="video-rotate-btn" title="Повернуть видео" aria-label="Повернуть видео" data-tooltip="Повернуть видео">
           <svg class="rotate-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
@@ -212,13 +209,11 @@
       </div>
     </section>
 
-    <!-- Заголовок урока -->
     <div class="lesson-meta">
       <div id="lessonBadge" class="lesson-badge">Модуль 1</div>
       <h1 id="lessonHeading">Загрузка...</h1>
     </div>
 
-    <!-- Вкладки материалов со стильными векторными иконками -->
     <nav class="tabs-nav">
       <button class="tab-item active" data-tab="hw">
         <svg class="tab-icon-svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -246,15 +241,12 @@
       </button>
     </nav>
 
-    <!-- Контент активной вкладки -->
     <main class="tab-content-area">
-      <!-- Список всех файлов вкладки (карточки без слепого листания) -->
+      
       <div id="filesListContainer" class="files-list-container"></div>
 
-      <!-- Текст домашнего задания (если есть) -->
       <div id="mainContentBox" class="content-box">Выберите урок для просмотра</div>
 
-      <!-- Запасной блок для обратной совместимости -->
       <div class="sub-parts-bar" id="subPartsBar" style="display: none;">
         <button id="prevSubPartBtn" class="pill-btn">◀</button>
         <span id="subPartTitle" class="badge">Файл 1/1</span>
@@ -268,7 +260,6 @@
     </main>
   </div>
 
-  <!-- Модалка универсального просмотра файлов (PDF, Word DOCX, Картинки, Код, MD) -->
   <div id="fileViewerModal" class="file-viewer-modal" style="display:none;">
     <div class="file-viewer-header">
       <span id="fileViewerTitle" class="file-viewer-title"></span>
@@ -294,17 +285,17 @@
         <div class="spinner"></div>
         <span id="viewerLoadingText">Загрузка документа...</span>
       </div>
-      <!-- PPTX presentation container -->
+      
       <div id="pptxViewerContainer" class="pptx-viewer-container" style="display:none;"></div>
-      <!-- PDF.js container -->
+      
       <div id="pdfViewerContainer" class="pdf-viewer-container" style="display:none;"></div>
-      <!-- Word DOCX (mammoth.js) container -->
+      
       <div id="docViewerContainer" class="doc-viewer-container" style="display:none;"></div>
-      <!-- Markdown (.md) rendered container -->
+      
       <div id="markdownViewerContainer" class="markdown-viewer-container" style="display:none;"></div>
-      <!-- Spreadsheet (XLSX / CSV) container -->
+      
       <div id="sheetViewerContainer" class="sheet-viewer-container" style="display:none;"></div>
-      <!-- Audio container -->
+      
       <div id="audioViewerContainer" class="audio-viewer-container" style="display:none;">
         <div class="audio-player-card">
           <div class="audio-icon-wrap">🎵</div>
@@ -312,15 +303,15 @@
           <audio id="viewerAudio" controls class="viewer-audio-element"></audio>
         </div>
       </div>
-      <!-- Image container -->
+      
       <div id="imageViewerContainer" class="image-viewer-container" style="display:none;">
         <img id="viewerImage" class="viewer-img" alt="Preview">
       </div>
-      <!-- Code / text container -->
+      
       <div id="codeViewerContainer" class="code-viewer-container" style="display:none;">
         <pre><code id="viewerCode"></code></pre>
       </div>
-      <!-- Universal interactive card container (for PPT, archives, unsupported formats) -->
+      
       <div id="cardViewerContainer" class="card-viewer-container" style="display:none;">
         <div class="file-card-box">
           <div id="fileCardIcon" class="file-card-icon">📊</div>
@@ -332,7 +323,7 @@
           </div>
         </div>
       </div>
-      <!-- Fallback iframe -->
+      
       <iframe id="fileViewerFrame" class="file-viewer-frame" style="display:none;"></iframe>
     </div>
   </div>

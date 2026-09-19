@@ -6,9 +6,6 @@ if (tg) {
 
 const API_BASE = "/api";
 
-// ---------------------------------------------------------------------------
-// Локализация (должна совпадать с языком, выбранным пользователем в обычном боте)
-// ---------------------------------------------------------------------------
 const I18N = {
   ru: {
     moduleLabel: "Модуль:",
@@ -216,7 +213,6 @@ let currentZipIdx = 0;
 let currentHwFileIdx = 0;
 let activeTab = "hw";
 
-// DOM
 const monthDropdownBtn = document.getElementById("monthDropdownBtn");
 const selectedMonthText = document.getElementById("selectedMonthText");
 const monthDropdownMenu = document.getElementById("monthDropdownMenu");
@@ -266,9 +262,6 @@ function getTelegramUserId() {
   return tg?.initDataUnsafe?.user?.id || null;
 }
 
-// ---------------------------------------------------------------------------
-// Применение перевода к статичным элементам интерфейса
-// ---------------------------------------------------------------------------
 function applyStaticTranslations() {
   document.querySelectorAll(".month-box label").forEach(el => el.textContent = t("moduleLabel"));
   document.querySelectorAll(".lesson-box label").forEach(el => el.textContent = t("lessonLabel"));
@@ -286,7 +279,6 @@ function applyStaticTranslations() {
     selectedLessonText.textContent = t("selectLessonPrompt");
   }
 
-  // Point 3: Translate action buttons dynamically
   sendActionBtn.textContent = t("sendToChatBtn");
   openDirectBtn.textContent = t("openFileBtn");
   const rotateBtn = document.getElementById("rotateVideoBtn");
@@ -304,7 +296,6 @@ function applyStaticTranslations() {
   if (loadingText) loadingText.textContent = t("docLoading");
 }
 
-// Initial call to translate UI immediately
 applyStaticTranslations();
 
 async function fetchUserLang() {
@@ -342,7 +333,7 @@ function showAppContent() {
 
 async function init() {
   const uid = getTelegramUserId();
-  // Если открыт прямой сайт (вне Telegram) — сразу показываем большой Х без слов
+  
   if (!uid) {
     showAccessDenied();
     return;
@@ -352,7 +343,7 @@ async function init() {
     const url = `${API_BASE}/lessons?userId=${uid}`;
     const res = await fetch(url);
     if (res.status === 403) {
-      // Пользователь не в вайтлисте
+      
       showAccessDenied();
       return;
     }
@@ -363,13 +354,11 @@ async function init() {
       return;
     }
 
-    // Пользователь в вайтлисте: показываем платформу
     showAppContent();
 
     currentLang = await fetchUserLang();
     applyStaticTranslations();
 
-    // Бэкенд может вернуть либо {lang, lessons}, либо (в старых версиях) просто массив
     if (Array.isArray(data)) {
       allLessons = data;
     } else {
@@ -468,15 +457,12 @@ function selectLesson(lesson) {
   updateTabContent();
 }
 
-// Скрываем вкладки, для которых у урока вообще нет материалов — вместо того,
-// чтобы показывать текст "не прикреплено". Если активная вкладка скрылась,
-// переключаемся на первую доступную.
 function updateTabsVisibility() {
   const l = currentSelectedLesson;
   if (!l) return;
 
   const visibility = {
-    hw: l.hasHomework !== false, // домашка почти всегда есть хотя бы текстом; по умолчанию показываем
+    hw: l.hasHomework !== false, 
     pdf: !!l.hasPdf,
     zip: !!l.hasZip,
   };
@@ -512,7 +498,6 @@ function updateVideoControls() {
     return;
   }
 
-  // Segmented video chips
   if (chipsContainer) {
     chipsContainer.innerHTML = "";
     if (videos.length > 1) {
@@ -2441,15 +2426,11 @@ function handleGesturePointer(clientX, clientY) {
     relX = (clientX - rect.left) / rect.width;
   }
 
-  // СТРОГО 50 НА 50 ДЛЯ ВСЕХ УСТРОЙСТВ И РЕЖИМОВ (ПК, смартфоны, обычный и фуллскрин):
-  // Левые 50% (< 0.5) — ВСЕГДА перемотка назад (-5, -10, -15...)
-  // Правые 50% (>= 0.5) — ВСЕГДА перемотка вперед (+5, +10, +15...)
   const side = relX < 0.5 ? "left" : "right";
 
   const now = Date.now();
   const timeDiff = now - lastTapTime;
 
-  // Если уже идёт активная серия быстрых перемоток на этой стороне (3-е, 4-е нажатие и т.д.):
   if (quickSeekSide && quickSeekSide === side && timeDiff < 850) {
     clearTimeout(clickTimer);
     clickCount = 0;
@@ -2462,7 +2443,7 @@ function handleGesturePointer(clientX, clientY) {
   if (clickCount === 1) {
     lastTapTime = now;
     clickTimer = setTimeout(() => {
-      // Одиночный клик: переключение пауза/воспроизведение
+      
       clickCount = 0;
       if (videoPlayer.paused) {
         videoPlayer.play().catch(() => {});
@@ -2472,7 +2453,7 @@ function handleGesturePointer(clientX, clientY) {
       showRotateBtn();
     }, 240);
   } else if (clickCount >= 2) {
-    // Двойной клик / тап: мгновенная перемотка 50/50 (никогда не закрывает полноэкранный режим!)
+    
     clearTimeout(clickTimer);
     clickCount = 0;
     lastTapTime = now;
@@ -2480,7 +2461,6 @@ function handleGesturePointer(clientX, clientY) {
   }
 }
 
-// Привязка к слою жестов поверх видео
 if (videoGestureLayer) {
   videoGestureLayer.addEventListener("touchstart", (e) => {
     if (e.touches && e.touches.length === 1) {
@@ -2491,7 +2471,7 @@ if (videoGestureLayer) {
   }, { passive: true });
 
   videoGestureLayer.addEventListener("click", (e) => {
-    // Защита от дублирования событий на сенсорных экранах (touch + synthetic click)
+    
     if (Date.now() - lastTouchTimestamp < 600) {
       e.preventDefault();
       e.stopPropagation();
@@ -2516,7 +2496,6 @@ if (videoGestureLayer) {
   videoGestureLayer.addEventListener("mousemove", showRotateBtn);
 }
 
-// Защитные перехватчики на самом элементе видео
 videoPlayer.addEventListener("dblclick", (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -2541,7 +2520,6 @@ if (videoContainer) {
   }, { capture: true });
 }
 
-// Горячие клавиши на ПК (пробел: пауза/плей, стрелки: +/-5 сек, F: весь экран)
 window.addEventListener("keydown", (e) => {
   if (document.activeElement === liveSearchInput) return;
 
@@ -2564,7 +2542,6 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
-// Отправка файла в Telegram-чат (Point 3 & Point 8)
 sendActionBtn.onclick = async () => {
   const l = currentSelectedLesson;
   if (!l) return;
@@ -2600,7 +2577,6 @@ sendActionBtn.onclick = async () => {
   }
 };
 
-// Меню селекторов
 monthDropdownBtn.onclick = (e) => {
   e.stopPropagation();
   lessonDropdownMenu.classList.remove("open");
@@ -2619,7 +2595,6 @@ document.addEventListener("click", () => {
   searchResults.style.display = "none";
 });
 
-// Живой поиск
 function fuzzyMatch(pattern, str) {
   pattern = pattern.toLowerCase().trim();
   str = str.toLowerCase();

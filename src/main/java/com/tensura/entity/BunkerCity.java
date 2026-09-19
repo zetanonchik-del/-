@@ -25,7 +25,6 @@ public class BunkerCity {
     @Builder.Default
     private String cityName = "Федерация Джура Темпест";
 
-    // --- City Level & Population ---
     @Column(nullable = false)
     @Builder.Default
     private int cityLevel = 1;
@@ -38,47 +37,45 @@ public class BunkerCity {
     @Builder.Default
     private int assignedWorkers = 10;
 
-    // --- Building Levels ---
     @Column(nullable = false)
     @Builder.Default
-    private int blacksmithLevel = 1; // Кузница Куробе (crafting weapon/armor)
+    private int blacksmithLevel = 1; 
 
     @Column(nullable = false)
     @Builder.Default
-    private int labLevel = 1; // Лаборатория Бальмунда (potions/magicule extraction)
+    private int labLevel = 1; 
 
     @Column(nullable = false)
     @Builder.Default
-    private int tavernLevel = 1; // Трактир Ригурда (morale, casino, quests)
+    private int tavernLevel = 1; 
 
     @Column(nullable = false)
     @Builder.Default
-    private int farmLevel = 1; // Фермы гоблинов (food, population growth)
+    private int farmLevel = 1; 
 
     @Column(nullable = false)
     @Builder.Default
-    private int barrierLevel = 1; // Защитный барьер Джуры (defense from monster waves)
-
-    // --- Resources Storage ---
-    @Column(nullable = false)
-    @Builder.Default
-    private long magicOre = 100L; // Магическая руда
+    private int barrierLevel = 1; 
 
     @Column(nullable = false)
     @Builder.Default
-    private long juraTimber = 200L; // Древесина Джунглей Джуры
+    private long magicOre = 100L; 
 
     @Column(nullable = false)
     @Builder.Default
-    private long magicWater = 50L; // Магическая вода (из пещеры Вельдоры)
+    private long juraTimber = 200L; 
 
     @Column(nullable = false)
     @Builder.Default
-    private long healingPotions = 5L; // Зелья восстановления
+    private long magicWater = 50L; 
 
     @Column(nullable = false)
     @Builder.Default
-    private long uncollectedStellas = 0L; // Накопленные налоги
+    private long healingPotions = 5L; 
+
+    @Column(nullable = false)
+    @Builder.Default
+    private long uncollectedStellas = 0L; 
 
     @Column(nullable = false)
     @Builder.Default
@@ -88,18 +85,16 @@ public class BunkerCity {
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    // --- Resource Generation Formulas ---
-
     public void collectPassiveResources() {
         LocalDateTime now = LocalDateTime.now();
         long minutesPassed = java.time.Duration.between(this.lastResourceCollection, now).toMinutes();
         if (minutesPassed < 5) {
-            return; // Min 5 min interval to accumulate
+            return; 
         }
 
         double hours = minutesPassed / 60.0;
         if (hours > 24.0) {
-            hours = 24.0; // Max 24 hours cap
+            hours = 24.0; 
         }
 
         long earnedOre = (long) Math.round(hours * (10 + (this.blacksmithLevel * 15) + (this.assignedWorkers * 2)));
